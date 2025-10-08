@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { sampleContacts } from "../data/sampleContacts";
+import { sampleNotifications } from "../data/sampleNotifications";
+import { sampleReminders } from "../data/sampleReminders";
+import { sampleActivities } from "../data/sampleActivities";
 import { MobileView } from "./MobileView";
 import { DesktopView } from "./DesktopView";
 
@@ -17,7 +20,7 @@ export const PersonalCRMHome = () => {
               : "bg-gray-700 hover:bg-gray-600"
           }`}
         >
-          📱 iPhone（3タブ＋右下FAB）
+          📱 iPhone
         </button>
         <button
           onClick={() => setViewMode("desktop")}
@@ -27,8 +30,19 @@ export const PersonalCRMHome = () => {
               : "bg-gray-700 hover:bg-gray-600"
           }`}
         >
-          💻 Desktop（サイドバー＋Home/Contact一体）
+          💻 Desktop
         </button>
+      </div>
+
+      {/* Screen Identifier for Testing */}
+      <div className="bg-yellow-100 border-b border-yellow-300 px-4 py-2 flex items-center justify-center gap-2 shrink-0">
+        <span className="text-xs font-mono font-semibold text-yellow-900">
+          画面ID: {viewMode === "mobile" ? "MOB-001" : "DSK-001"}
+        </span>
+        <span className="text-xs text-yellow-700">|</span>
+        <span className="text-xs text-yellow-800">
+          {viewMode === "mobile" ? "モバイル（3タブ）" : "デスクトップ（サイドバー）"}
+        </span>
       </div>
 
       <div className="flex-1 overflow-hidden flex justify-center items-center bg-gray-900 p-4">
@@ -42,9 +56,14 @@ export const PersonalCRMHome = () => {
           }}
         >
           {viewMode === "mobile" ? (
-            <MobileView contacts={sampleContacts} />
+            <MobileView
+              contacts={sampleContacts}
+              notifications={sampleNotifications}
+              reminders={sampleReminders}
+              activities={sampleActivities}
+            />
           ) : (
-            <DesktopView contacts={sampleContacts} />
+            <DesktopView contacts={sampleContacts} notifications={sampleNotifications} />
           )}
         </div>
       </div>

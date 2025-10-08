@@ -1,8 +1,5 @@
 import { useState } from "react";
 import {
-  Heart,
-  X,
-  Bell,
   User,
   Users,
   Plus,
@@ -12,155 +9,78 @@ import {
   Check,
 } from "lucide-react";
 import { Contact } from "../types/Contact";
+import { Notification } from "../types/Notification";
+import { Reminder } from "../types/Reminder";
+import { Activity } from "../types/Activity";
 import { AddModal } from "./AddModal";
+import { NotificationIcon } from "./NotificationIcon";
+import { NotificationModal } from "./NotificationModal";
+import { ReminderSection } from "./Home/ReminderSection";
+import { NewContactsSection } from "./Home/NewContactsSection";
+import { ActivitySection } from "./Home/ActivitySection";
 
 interface MobileViewProps {
   contacts: Contact[];
+  notifications: Notification[];
+  reminders: Reminder[];
+  activities: Activity[];
 }
 
-export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
-  const [contacts] = useState(initialContacts);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [dragStart, setDragStart] = useState<number | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
+export const MobileView = ({
+  contacts: initialContacts,
+  notifications: initialNotifications,
+  reminders: initialReminders,
+  activities: initialActivities
+}: MobileViewProps) => {
+  const [contacts, setContacts] = useState(initialContacts);
+  const [notifications] = useState(initialNotifications);
+  const [reminders, setReminders] = useState(initialReminders);
+  const [activities] = useState(initialActivities);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [currentTab, setCurrentTab] = useState("home");
 
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    const clientX =
-      "clientX" in e ? e.clientX : e.touches[0].clientX;
-    setDragStart(clientX);
+  const handleReminderComplete = (id: string) => {
+    setReminders(reminders.map(r =>
+      r.id === id ? { ...r, completed: true } : r
+    ));
   };
 
-  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (dragStart === null) return;
-    const clientX =
-      "clientX" in e ? e.clientX : e.touches[0].clientX;
-    setDragOffset(clientX - dragStart);
+  const handleReminderPostpone = (_id: string) => {
+    alert("リマインダー延期機能（張りぼて）");
   };
 
-  const handleDragEnd = () => {
-    if (Math.abs(dragOffset) > 100) {
-      if (dragOffset > 0) {
-        console.log("Keep contact:", contacts[currentIndex].name);
-      } else {
-        console.log("Skip contact:", contacts[currentIndex].name);
-      }
-
-      if (currentIndex < contacts.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      }
-    }
-
-    setDragStart(null);
-    setDragOffset(0);
+  const handleArchive = (id: number) => {
+    setContacts(contacts.map(c =>
+      c.id === id ? { ...c, status: 'archived' as const } : c
+    ));
   };
 
-  const handleAction = (action: string) => {
-    console.log(action, contacts[currentIndex].name);
-    if (currentIndex < contacts.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+  const handleKeepInTouch = (_id: number) => {
+    alert("Keep in Touch設定モーダル（張りぼて）");
+  };
+
+  const handleLater = (_id: number) => {
+    alert("後で確認（張りぼて）");
   };
 
   const renderTabContent = () => {
     if (currentTab === "home") {
       return (
-        <>
-          <div className="p-4 text-center">
-            <p className="text-sm text-gray-600">
-              新しいContact {currentIndex + 1} / {contacts.length}
-            </p>
-          </div>
-
-          <div className="flex-1 relative px-4 pb-8">
-            {contacts.map((contact, index) => {
-              if (index < currentIndex) return null;
-
-              const isTop = index === currentIndex;
-              const offset = (index - currentIndex) * 8;
-              const scale = 1 - (index - currentIndex) * 0.03;
-              const rotation = isTop ? dragOffset / 20 : 0;
-
-              return (
-                <div
-                  key={contact.id}
-                  className="absolute inset-x-4 top-0 bottom-0"
-                  style={{
-                    transform: `translateY(${offset}px) scale(${scale}) rotate(${rotation}deg) translateX(${
-                      isTop ? dragOffset : 0
-                    }px)`,
-                    transition: dragStart !== null ? "none" : "all 0.3s ease",
-                    zIndex: contacts.length - index,
-                    opacity: index < currentIndex + 3 ? 1 : 0,
-                  }}
-                  onMouseDown={isTop ? handleDragStart : undefined}
-                  onMouseMove={isTop ? handleDragMove : undefined}
-                  onMouseUp={isTop ? handleDragEnd : undefined}
-                  onMouseLeave={isTop ? handleDragEnd : undefined}
-                  onTouchStart={isTop ? handleDragStart : undefined}
-                  onTouchMove={isTop ? handleDragMove : undefined}
-                  onTouchEnd={isTop ? handleDragEnd : undefined}
-                >
-                  <div className="h-full bg-white rounded-3xl shadow-xl border border-gray-200 p-6 flex flex-col cursor-grab active:cursor-grabbing">
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
-                        {contact.source}
-                      </span>
-                      <span className="text-4xl">{contact.avatar}</span>
-                    </div>
-
-                    <div className="flex-1 flex flex-col justify-center">
-                      <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                        {contact.name}
-                      </h2>
-                      <p className="text-lg text-gray-700 mb-1">
-                        {contact.title}
-                      </p>
-                      <p className="text-base text-gray-600 mb-6">
-                        {contact.company}
-                      </p>
-
-                      <div className="bg-gray-50 rounded-2xl p-4 mb-6">
-                        <p className="text-xs text-gray-500 mb-1">
-                          出会った場所
-                        </p>
-                        <p className="text-sm text-gray-700">{contact.metAt}</p>
-                      </div>
-                    </div>
-
-                    {isTop && dragOffset !== 0 && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div
-                          className={`text-6xl font-bold ${
-                            dragOffset > 0 ? "text-green-500" : "text-red-500"
-                          }`}
-                        >
-                          {dragOffset > 0 ? "✓" : "✕"}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="p-6 bg-white flex justify-center gap-8">
-            <button
-              onClick={() => handleAction("skip")}
-              className="w-16 h-16 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center shadow-lg transition-all active:scale-95"
-            >
-              <X className="w-8 h-8 text-gray-700" />
-            </button>
-            <button
-              onClick={() => handleAction("keep")}
-              className="w-16 h-16 rounded-full bg-gray-900 hover:bg-gray-800 flex items-center justify-center shadow-lg transition-all active:scale-95"
-            >
-              <Heart className="w-8 h-8 text-white" />
-            </button>
-          </div>
-        </>
+        <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+          <ReminderSection
+            reminders={reminders}
+            onComplete={handleReminderComplete}
+            onPostpone={handleReminderPostpone}
+          />
+          <NewContactsSection
+            contacts={contacts}
+            onArchive={handleArchive}
+            onKeepInTouch={handleKeepInTouch}
+            onLater={handleLater}
+          />
+          <ActivitySection activities={activities} />
+        </div>
       );
     } else if (currentTab === "contacts") {
       return (
@@ -293,17 +213,31 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
     }
   };
 
+  const getScreenId = () => {
+    const tabIds: Record<string, string> = {
+      home: "MOB-HOME",
+      contacts: "MOB-CONTACTS",
+      settings: "MOB-SETTINGS",
+    };
+    return tabIds[currentTab] || "MOB-UNKNOWN";
+  };
+
   return (
     <div className="w-full h-full bg-white flex flex-col relative overflow-hidden">
+      {/* Screen Identifier Bar */}
+      <div className="bg-yellow-50 border-b border-yellow-200 px-3 py-1 flex items-center justify-center shrink-0">
+        <span className="text-xs font-mono font-semibold text-yellow-900">
+          {getScreenId()}
+        </span>
+      </div>
+
       <div className="p-4 flex items-center justify-between bg-white border-b border-gray-200 shrink-0">
         <h1 className="text-xl font-bold text-gray-900">Personal CRM</h1>
         <div className="flex gap-3">
-          <div className="relative">
-            <Bell className="w-6 h-6 text-gray-600" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-gray-900 rounded-full text-xs text-white flex items-center justify-center">
-              3
-            </span>
-          </div>
+          <NotificationIcon
+            unreadCount={notifications.filter(n => !n.read).length}
+            onClick={() => setShowNotificationModal(true)}
+          />
           <User className="w-6 h-6 text-gray-600" />
         </div>
       </div>
@@ -351,6 +285,13 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
       </button>
 
       {showAddModal && <AddModal onClose={() => setShowAddModal(false)} />}
+
+      <NotificationModal
+        isOpen={showNotificationModal}
+        onClose={() => setShowNotificationModal(false)}
+        notifications={notifications}
+        contacts={contacts}
+      />
     </div>
   );
 };

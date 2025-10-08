@@ -11,16 +11,22 @@ import {
   X,
 } from "lucide-react";
 import { Contact } from "../types/Contact";
+import { Notification } from "../types/Notification";
 import { AddModal } from "./AddModal";
+import { NotificationIcon } from "./NotificationIcon";
+import { NotificationModal } from "./NotificationModal";
 
 interface DesktopViewProps {
   contacts: Contact[];
+  notifications: Notification[];
 }
 
-export const DesktopView = ({ contacts }: DesktopViewProps) => {
+export const DesktopView = ({ contacts, notifications: initialNotifications }: DesktopViewProps) => {
   const [selectedContact, setSelectedContact] = useState(contacts[0]);
   const [currentSidebarItem, setCurrentSidebarItem] = useState("home");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [notifications] = useState(initialNotifications);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const renderMainContent = () => {
     if (currentSidebarItem === "home") {
@@ -360,12 +366,35 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
     }
   };
 
+  const getScreenId = () => {
+    const sidebarIds: Record<string, string> = {
+      home: "DSK-HOME",
+      contacts: "DSK-CONTACTS",
+      settings: "DSK-SETTINGS",
+    };
+    return sidebarIds[currentSidebarItem] || "DSK-UNKNOWN";
+  };
+
   return (
-    <div className="h-full bg-gray-50 flex">
-      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 border-b">
-          <h1 className="text-xl font-bold text-gray-900">Personal CRM</h1>
-        </div>
+    <div className="h-full bg-gray-50 flex flex-col">
+      {/* Screen Identifier Bar */}
+      <div className="bg-yellow-50 border-b border-yellow-200 px-3 py-1 flex items-center justify-center shrink-0">
+        <span className="text-xs font-mono font-semibold text-yellow-900">
+          {getScreenId()}
+        </span>
+      </div>
+
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between">
+              <h1 className="text-xl font-bold text-gray-900">Personal CRM</h1>
+              <NotificationIcon
+                unreadCount={notifications.filter(n => !n.read).length}
+                onClick={() => setShowNotificationModal(true)}
+              />
+            </div>
+          </div>
 
         <nav className="flex-1 p-4">
           <button
@@ -430,8 +459,16 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
         </div>
       </div>
 
-      {renderMainContent()}
-      {showAddModal && <AddModal onClose={() => setShowAddModal(false)} />}
+        {renderMainContent()}
+        {showAddModal && <AddModal onClose={() => setShowAddModal(false)} />}
+
+        <NotificationModal
+          isOpen={showNotificationModal}
+          onClose={() => setShowNotificationModal(false)}
+          notifications={notifications}
+          contacts={contacts}
+        />
+      </div>
     </div>
   );
 };
