@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Camera, FileText, Edit3, ArrowLeft } from "lucide-react";
+import { Camera, Edit3, ArrowLeft } from "lucide-react";
 
 interface AddModalProps {
   onClose: () => void;
@@ -48,7 +48,7 @@ export const AddModal = ({ onClose }: AddModalProps) => {
     if (step === "menu") {
       return (
         <>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">
             新しいContactを追加
           </h3>
 
@@ -62,43 +62,33 @@ export const AddModal = ({ onClose }: AddModalProps) => {
 
           <button
             onClick={handleCardScan}
-            className="w-full bg-blue-50 hover:bg-blue-100 rounded-2xl p-4 mb-3 flex items-center gap-3 transition-colors"
+            className="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl p-4 mb-3 flex items-center gap-3 transition-colors"
           >
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center">
               <Camera className="w-6 h-6 text-white" />
             </div>
             <div className="text-left">
-              <p className="font-semibold text-gray-800">名刺をスキャン</p>
+              <p className="font-semibold text-gray-900">名刺をスキャン</p>
               <p className="text-sm text-gray-600">画像をアップロード</p>
-            </div>
-          </button>
-
-          <button className="w-full bg-green-50 hover:bg-green-100 rounded-2xl p-4 mb-3 flex items-center gap-3 transition-colors">
-            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-left">
-              <p className="font-semibold text-gray-800">Prairie Card読み取り</p>
-              <p className="text-sm text-gray-600">デジタル名刺から</p>
             </div>
           </button>
 
           <button
             onClick={handleManualInput}
-            className="w-full bg-gray-50 hover:bg-gray-100 rounded-2xl p-4 mb-4 flex items-center gap-3 transition-colors"
+            className="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl p-4 mb-4 flex items-center gap-3 transition-colors"
           >
-            <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center">
               <Edit3 className="w-6 h-6 text-white" />
             </div>
             <div className="text-left">
-              <p className="font-semibold text-gray-800">手動で入力</p>
+              <p className="font-semibold text-gray-900">手動で入力</p>
               <p className="text-sm text-gray-600">フォームから追加</p>
             </div>
           </button>
 
           <button
             onClick={onClose}
-            className="w-full py-3 text-gray-600 font-medium"
+            className="w-full py-3 text-gray-600 font-medium hover:text-gray-900"
           >
             キャンセル
           </button>

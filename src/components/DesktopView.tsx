@@ -55,7 +55,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                     <p className="text-xs text-gray-500 truncate">
                       {contact.company}
                     </p>
-                    <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                    <span className="inline-block mt-2 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
                       {contact.source}
                     </span>
                   </div>
@@ -68,7 +68,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
             <div className="max-w-2xl mx-auto">
               <div className="bg-white rounded-3xl shadow-xl p-8">
                 <div className="flex justify-between items-start mb-6">
-                  <span className="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-full font-medium">
+                  <span className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-full font-medium">
                     {selectedContact.source}
                   </span>
                   <span className="text-6xl">{selectedContact.avatar}</span>
@@ -111,11 +111,11 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                 </div>
 
                 <div className="flex gap-4">
-                  <button className="flex-1 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
+                  <button className="flex-1 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
                     <Heart className="w-5 h-5" />
                     Keep & Follow Up
                   </button>
-                  <button className="px-6 py-4 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
+                  <button className="px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
                     <X className="w-5 h-5" />
                     Skip
                   </button>
@@ -161,7 +161,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                     <p className="text-xs text-gray-500 truncate">
                       {contact.company}
                     </p>
-                    <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                    <span className="inline-block mt-2 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
                       {contact.source}
                     </span>
                   </div>
@@ -174,7 +174,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
             <div className="max-w-2xl mx-auto">
               <div className="bg-white rounded-3xl shadow-xl p-8">
                 <div className="flex justify-between items-start mb-6">
-                  <span className="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-full font-medium">
+                  <span className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-full font-medium">
                     {selectedContact.source}
                   </span>
                   <span className="text-6xl">{selectedContact.avatar}</span>
@@ -200,7 +200,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                 <div className="bg-gray-50 rounded-2xl p-6 mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-semibold text-gray-700">詳細情報</p>
-                    <button className="px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700">
+                    <button className="px-3 py-1 bg-gray-900 text-white text-xs rounded-lg hover:bg-gray-800">
                       AIで自動収集する
                     </button>
                   </div>
@@ -267,7 +267,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                   <p className="text-sm text-gray-600 mb-4">
                     メール署名から自動でContactを作成できます。
                   </p>
-                  <button className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
+                  <button className="w-full py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800">
                     連携する
                   </button>
                 </div>
@@ -287,7 +287,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                   <p className="text-sm text-gray-600 mb-4">
                     チーム内でコンタクトを共有できます。
                   </p>
-                  <button className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
+                  <button className="w-full py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800">
                     連携する
                   </button>
                 </div>
@@ -303,7 +303,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                       <p className="font-medium text-gray-900">フォローアップリマインド</p>
                       <p className="text-sm text-gray-500">新しいコンタクトのリマインド通知</p>
                     </div>
-                    <div className="w-12 h-6 bg-blue-600 rounded-full relative cursor-pointer">
+                    <div className="w-12 h-6 bg-gray-900 rounded-full relative cursor-pointer">
                       <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                     </div>
                   </div>
@@ -312,7 +312,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                       <p className="font-medium text-gray-900">誕生日通知</p>
                       <p className="text-sm text-gray-500">コンタクトの誕生日を通知</p>
                     </div>
-                    <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer">
+                    <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer hover:bg-gray-400">
                       <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                     </div>
                   </div>
@@ -321,7 +321,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                       <p className="font-medium text-gray-900">転職通知</p>
                       <p className="text-sm text-gray-500">コンタクトの転職情報を通知</p>
                     </div>
-                    <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer">
+                    <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer hover:bg-gray-400">
                       <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                     </div>
                   </div>
@@ -338,7 +338,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                       <p className="font-medium text-gray-900">フォローアップ提案</p>
                       <p className="text-sm text-gray-500">AIによるメッセージ提案を有効化</p>
                     </div>
-                    <div className="w-12 h-6 bg-blue-600 rounded-full relative cursor-pointer">
+                    <div className="w-12 h-6 bg-gray-900 rounded-full relative cursor-pointer">
                       <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                     </div>
                   </div>
@@ -347,7 +347,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
                       <p className="font-medium text-gray-900">自動情報拡充</p>
                       <p className="text-sm text-gray-500">コンタクト情報を自動で収集</p>
                     </div>
-                    <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer">
+                    <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer hover:bg-gray-400">
                       <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                     </div>
                   </div>
@@ -370,7 +370,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
         <nav className="flex-1 p-4">
           <button
             onClick={() => setShowAddModal(true)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 mb-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-md"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 mb-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all shadow-md"
           >
             <Plus className="w-5 h-5" />
             <span>Add Contact</span>
@@ -380,7 +380,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
             onClick={() => setCurrentSidebarItem("home")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-colors ${
               currentSidebarItem === "home"
-                ? "bg-blue-50 text-blue-600"
+                ? "bg-gray-100 text-gray-900"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
           >
@@ -392,7 +392,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
             onClick={() => setCurrentSidebarItem("contacts")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-colors ${
               currentSidebarItem === "contacts"
-                ? "bg-blue-50 text-blue-600"
+                ? "bg-gray-100 text-gray-900"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
           >
@@ -404,7 +404,7 @@ export const DesktopView = ({ contacts }: DesktopViewProps) => {
             onClick={() => setCurrentSidebarItem("settings")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-colors ${
               currentSidebarItem === "settings"
-                ? "bg-blue-50 text-blue-600"
+                ? "bg-gray-100 text-gray-900"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
           >

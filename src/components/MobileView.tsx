@@ -102,9 +102,9 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
                   onTouchMove={isTop ? handleDragMove : undefined}
                   onTouchEnd={isTop ? handleDragEnd : undefined}
                 >
-                  <div className="h-full bg-white rounded-3xl shadow-xl p-6 flex flex-col cursor-grab active:cursor-grabbing">
+                  <div className="h-full bg-white rounded-3xl shadow-xl border border-gray-200 p-6 flex flex-col cursor-grab active:cursor-grabbing">
                     <div className="flex justify-between items-start mb-4">
-                      <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
+                      <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
                         {contact.source}
                       </span>
                       <span className="text-4xl">{contact.avatar}</span>
@@ -149,15 +149,15 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
           <div className="p-6 bg-white flex justify-center gap-8">
             <button
               onClick={() => handleAction("skip")}
-              className="w-16 h-16 rounded-full bg-red-50 hover:bg-red-100 flex items-center justify-center shadow-lg transition-all active:scale-95"
+              className="w-16 h-16 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center shadow-lg transition-all active:scale-95"
             >
-              <X className="w-8 h-8 text-red-500" />
+              <X className="w-8 h-8 text-gray-700" />
             </button>
             <button
               onClick={() => handleAction("keep")}
-              className="w-16 h-16 rounded-full bg-green-50 hover:bg-green-100 flex items-center justify-center shadow-lg transition-all active:scale-95"
+              className="w-16 h-16 rounded-full bg-gray-900 hover:bg-gray-800 flex items-center justify-center shadow-lg transition-all active:scale-95"
             >
-              <Heart className="w-8 h-8 text-green-500" />
+              <Heart className="w-8 h-8 text-white" />
             </button>
           </div>
         </>
@@ -192,7 +192,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
                     <p className="text-xs text-gray-500 truncate mb-2">
                       {contact.company}
                     </p>
-                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                    <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
                       {contact.source}
                     </span>
                   </div>
@@ -234,7 +234,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
                   <p className="text-xs text-gray-500">未接続</p>
                 </div>
               </div>
-              <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg">
+              <button className="px-3 py-1 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800">
                 連携
               </button>
             </div>
@@ -249,7 +249,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
                   <p className="text-xs text-gray-500">未接続</p>
                 </div>
               </div>
-              <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg">
+              <button className="px-3 py-1 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800">
                 連携
               </button>
             </div>
@@ -262,7 +262,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
             <div className="p-4 border-b">
               <div className="flex items-center justify-between">
                 <p className="font-medium text-gray-800">フォローアップリマインド</p>
-                <div className="w-12 h-6 bg-blue-600 rounded-full relative cursor-pointer">
+                <div className="w-12 h-6 bg-gray-900 rounded-full relative cursor-pointer">
                   <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                 </div>
               </div>
@@ -270,7 +270,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <p className="font-medium text-gray-800">誕生日通知</p>
-                <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer">
+                <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer hover:bg-gray-400">
                   <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                 </div>
               </div>
@@ -294,13 +294,13 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-b from-blue-50 to-white flex flex-col relative overflow-hidden">
-      <div className="p-4 flex items-center justify-between bg-white shadow-sm shrink-0">
-        <h1 className="text-xl font-bold text-gray-800">Personal CRM</h1>
+    <div className="w-full h-full bg-white flex flex-col relative overflow-hidden">
+      <div className="p-4 flex items-center justify-between bg-white border-b border-gray-200 shrink-0">
+        <h1 className="text-xl font-bold text-gray-900">Personal CRM</h1>
         <div className="flex gap-3">
           <div className="relative">
             <Bell className="w-6 h-6 text-gray-600" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-gray-900 rounded-full text-xs text-white flex items-center justify-center">
               3
             </span>
           </div>
@@ -314,7 +314,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
         <button
           onClick={() => setCurrentTab("home")}
           className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-colors ${
-            currentTab === "home" ? "text-blue-600" : "text-gray-500"
+            currentTab === "home" ? "text-gray-900" : "text-gray-500"
           }`}
         >
           <Home className="w-6 h-6" />
@@ -324,7 +324,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
         <button
           onClick={() => setCurrentTab("contacts")}
           className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-colors ${
-            currentTab === "contacts" ? "text-blue-600" : "text-gray-500"
+            currentTab === "contacts" ? "text-gray-900" : "text-gray-500"
           }`}
         >
           <Users className="w-6 h-6" />
@@ -334,7 +334,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
         <button
           onClick={() => setCurrentTab("settings")}
           className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-colors ${
-            currentTab === "settings" ? "text-blue-600" : "text-gray-500"
+            currentTab === "settings" ? "text-gray-900" : "text-gray-500"
           }`}
         >
           <Settings className="w-6 h-6" />
@@ -345,7 +345,7 @@ export const MobileView = ({ contacts: initialContacts }: MobileViewProps) => {
       {/* Floating Action Button */}
       <button
         onClick={() => setShowAddModal(true)}
-        className="absolute bottom-20 right-4 w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl active:scale-95 transition-all z-40"
+        className="absolute bottom-20 right-4 w-14 h-14 bg-gray-900 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-800 active:scale-95 transition-all z-40"
       >
         <Plus className="w-7 h-7 text-white" />
       </button>
