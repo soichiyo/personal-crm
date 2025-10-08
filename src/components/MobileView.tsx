@@ -45,9 +45,11 @@ export const MobileView = ({
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [currentTab, setCurrentTab] = useState("home");
 
-  const addActivity = (description: string) => {
-    const newActivity = {
+  const addActivity = (description: string, contactId?: string) => {
+    const newActivity: Activity = {
       id: `activity-${Date.now()}`,
+      contactId: contactId || '',
+      type: 'note-added',
       description,
       timestamp: new Date(),
     };
@@ -89,11 +91,11 @@ export const MobileView = ({
     }
   };
 
-  const handleKeepInTouchConfirm = (interval: string) => {
+  const handleKeepInTouchConfirm = (interval: '1week' | '3weeks' | '1month' | 'ai') => {
     if (selectedContact) {
       // 新しいReminderを作成
       const dueDate = calculateDueDate(interval);
-      const newReminder = {
+      const newReminder: Reminder = {
         id: `reminder-${Date.now()}`,
         contactId: selectedContact.id.toString(),
         dueDate,

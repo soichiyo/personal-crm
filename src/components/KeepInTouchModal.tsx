@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Contact } from '../types/Contact';
 import { Modal } from './common/Modal';
-import { X } from 'lucide-react';
 
 interface KeepInTouchModalProps {
   isOpen: boolean;
   contact: Contact;
   onClose: () => void;
-  onConfirm: (interval: string) => void;
+  onConfirm: (interval: '1week' | '3weeks' | '1month' | 'ai') => void;
 }
 
 export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
@@ -16,9 +15,9 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
   onClose,
   onConfirm,
 }) => {
-  const [selectedInterval, setSelectedInterval] = useState<string | null>(null);
+  const [selectedInterval, setSelectedInterval] = useState<'1week' | '3weeks' | '1month' | 'ai' | null>(null);
 
-  const intervals = [
+  const intervals: Array<{ value: '1week' | '3weeks' | '1month' | 'ai'; label: string }> = [
     { value: '1week', label: '1週間後' },
     { value: '3weeks', label: '3週間後' },
     { value: '1month', label: '1ヶ月後' },
@@ -35,23 +34,10 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="bg-white rounded-t-2xl max-h-[80vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-gray-900">
-            {contact.name}さん
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5 text-gray-600" />
-          </button>
-        </div>
-
+    <Modal isOpen={isOpen} onClose={onClose} title={`${contact.name}さん`}>
+      <div className="flex flex-col -mx-6 -mt-4">
         {/* Content */}
-        <div className="p-4 overflow-y-auto flex-1">
+        <div className="px-6 py-4">
           <p className="text-sm text-gray-700 mb-4">いつ連絡しますか？</p>
 
           <div className="space-y-2">
@@ -79,7 +65,7 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 flex gap-3">
+        <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
           <button
             onClick={onClose}
             className="flex-1 px-4 py-3 bg-gray-100 text-gray-900 font-medium rounded-xl hover:bg-gray-200 transition-colors"
