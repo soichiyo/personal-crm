@@ -334,7 +334,15 @@ export const MobileView = ({
       </div>
 
       <div className="p-4 flex items-center justify-between bg-white border-b border-gray-200 shrink-0">
-        <h1 className="text-2xl">🏠</h1>
+        <button
+          onClick={() => setCurrentTab("home")}
+          className="p-2 rounded-full transition-colors hover:bg-gray-100"
+          aria-label="ホームへ戻る"
+        >
+          <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center">
+            <Home className="w-5 h-5 text-white" />
+          </div>
+        </button>
         <div className="flex gap-3">
           <NotificationIcon
             unreadCount={notifications.filter(n => !n.read).length}

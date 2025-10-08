@@ -23,17 +23,17 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
   const [activeTab, setActiveTab] = useState<TabType>('general');
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="通知">
-      <div className="flex flex-col h-full -mx-6 -mt-4">
+    <Modal isOpen={isOpen} onClose={onClose} title="通知" bodyClassName="p-0">
+      <div className="flex flex-col h-full">
         {/* Screen Identifier */}
-        <div className="bg-yellow-400 px-3 py-1 flex items-center justify-center mb-2">
+        <div className="bg-yellow-400 px-3 py-1 flex items-center justify-center">
           <span className="text-xs font-mono font-bold text-gray-900">
             MOB-NOTIF-{activeTab === 'general' ? 'GEN' : 'AI'}
           </span>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-gray-200 mb-4 px-6">
+        <div className="flex border-b border-gray-200 px-6 py-3">
           <button
             onClick={() => setActiveTab('general')}
             className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
@@ -61,7 +61,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
         </div>
 
         {/* Tab Content */}
-        <div role="tabpanel" className="flex-1 overflow-y-auto px-6">
+        <div role="tabpanel" className="flex-1 overflow-y-auto px-6 py-4">
           {activeTab === 'general' ? (
             <GeneralTab notifications={notifications} />
           ) : (

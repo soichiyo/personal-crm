@@ -62,6 +62,17 @@ export const AddModal = ({ onClose }: AddModalProps) => {
       profileEmoji: "👨‍💼",
       priority: "medium",
     });
+
+    // OCR完了時にToastを表示
+    setToastType("success");
+    setToastMessage("作成されました！");
+    setShowToast(true);
+
+    // 1秒後にToastを非表示
+    setTimeout(() => {
+      setShowToast(false);
+    }, 1000);
+
     setStep("edit");
   };
 
@@ -75,19 +86,9 @@ export const AddModal = ({ onClose }: AddModalProps) => {
   };
 
   const handleCloseEdit = () => {
-    // 編集画面を閉じるときに確定処理
+    // 編集画面を閉じるときの処理
     console.log("Saved contact:", newContact);
-
-    // Toastを表示
-    setToastType("success");
-    setToastMessage("作成されました！");
-    setShowToast(true);
-
-    // 0.8秒後にモーダルを閉じる
-    setTimeout(() => {
-      setShowToast(false);
-      onClose();
-    }, 800);
+    onClose();
   };
 
   // メニュー画面
@@ -110,34 +111,34 @@ export const AddModal = ({ onClose }: AddModalProps) => {
 
           <div className="p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">
-              新しいContactを追加
+              新しい連絡先を追加
             </h3>
 
-          <button
-            onClick={handleCardScan}
-            className="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl p-4 mb-3 flex items-center gap-3 transition-colors"
-          >
-            <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center">
-              <Camera className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-left">
-              <p className="font-semibold text-gray-900">名刺をスキャン</p>
-              <p className="text-sm text-gray-600">カメラで撮影</p>
-            </div>
-          </button>
+            <button
+              onClick={handleCardScan}
+              className="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl p-4 mb-3 flex items-center gap-3 transition-colors"
+            >
+              <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center">
+                <Camera className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-semibold text-gray-900">名刺をスキャン</p>
+                <p className="text-sm text-gray-600">カメラで撮影</p>
+              </div>
+            </button>
 
-          <button
-            onClick={handleManualInput}
-            className="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl p-4 mb-4 flex items-center gap-3 transition-colors"
-          >
-            <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center">
-              <Edit3 className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-left">
-              <p className="font-semibold text-gray-900">手動で入力</p>
-              <p className="text-sm text-gray-600">フォームから追加</p>
-            </div>
-          </button>
+            <button
+              onClick={handleManualInput}
+              className="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl p-4 mb-4 flex items-center gap-3 transition-colors"
+            >
+              <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center">
+                <Edit3 className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-semibold text-gray-900">手動で入力</p>
+                <p className="text-sm text-gray-600">フォームから追加</p>
+              </div>
+            </button>
 
             <button
               onClick={onClose}

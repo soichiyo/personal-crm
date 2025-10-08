@@ -6,9 +6,16 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  bodyClassName?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  bodyClassName,
+}) => {
   // ESCキーでモーダルを閉じる
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -58,7 +65,11 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div
+          className={`flex-1 overflow-y-auto ${
+            bodyClassName ? bodyClassName : 'px-6 py-4'
+          }`}
+        >
           {children}
         </div>
       </div>

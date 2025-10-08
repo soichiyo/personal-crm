@@ -52,7 +52,7 @@ export const Toast: React.FC<ToastProps> = ({
   };
 
   return (
-    <div className="absolute top-4 right-4 z-50 animate-in slide-in-from-top duration-300">
+    <div className="fixed top-4 right-4 z-[60] animate-in slide-in-from-top duration-300">
       <div
         className={`bg-white border-l-4 ${getBorderColor()} rounded-lg shadow-lg p-4 min-w-[300px] max-w-md flex items-start gap-3`}
       >

@@ -34,8 +34,13 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`${contact.name}さん`}>
-      <div className="flex flex-col -mx-6 -mt-4">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`${contact.name}さん`}
+      bodyClassName="p-0 flex flex-col"
+    >
+      <div className="flex flex-col">
         {/* Content */}
         <div className="px-6 py-4">
           <p className="text-sm text-gray-700 mb-4">いつ連絡しますか？</p>

@@ -49,13 +49,16 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`${contact.name}さんへのフォローアップ提案`}>
-      <div className="flex flex-col -mx-6 -mt-4">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`${contact.name}さんへのフォローアップ提案`}
+      bodyClassName="p-0 flex flex-col"
+    >
+      <div className="flex flex-col">
         {/* 提案理由 */}
         <div className="px-6 py-4 bg-blue-50 border-b border-blue-100">
-          <p className="text-sm text-blue-900">
-            💡 {suggestion.reason}
-          </p>
+          <p className="text-sm text-blue-900">💡 {suggestion.reason}</p>
         </div>
 
         {/* ドラフト文面 */}
@@ -69,9 +72,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
             className="w-full h-48 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             placeholder="フォローアップメッセージを編集..."
           />
-          <p className="text-xs text-gray-500 mt-2">
-            文面は自由に編集できます
-          </p>
+          <p className="text-xs text-gray-500 mt-2">文面は自由に編集できます</p>
         </div>
 
         {/* アクションボタン */}
@@ -104,7 +105,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
 
         {/* コピー完了Toast */}
         {showCopyToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg z-[60] animate-in fade-in slide-in-from-top-2 duration-200">
             ✓ コピーしました
           </div>
         )}
