@@ -11,12 +11,14 @@ interface ContactEditModalProps {
   contact: Contact;
   onClose: () => void;
   onSave: (contact: Contact) => void;
+  onFollowUpClick?: () => void;
 }
 
 export const ContactEditModal: React.FC<ContactEditModalProps> = ({
   contact: initialContact,
   onClose,
   onSave,
+  onFollowUpClick,
 }) => {
   const [contact, setContact] = useState<Contact>(initialContact);
   const [note, setNote] = useState('');
@@ -61,7 +63,9 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
   };
 
   const handleFollowUp = () => {
-    alert('フォローアップ提案機能は後で実装します');
+    if (onFollowUpClick) {
+      onFollowUpClick();
+    }
   };
 
   return (

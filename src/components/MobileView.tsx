@@ -15,6 +15,7 @@ import { Activity } from "../types/Activity";
 import { AddModal } from "./AddModal";
 import { ContactEditModal } from "./ContactEditModal";
 import { KeepInTouchModal } from "./KeepInTouchModal";
+import { FollowUpModal } from "./FollowUpModal";
 import { NotificationIcon } from "./NotificationIcon";
 import { NotificationModal } from "./NotificationModal";
 import { ReminderSection } from "./Home/ReminderSection";
@@ -42,6 +43,7 @@ export const MobileView = ({
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showKeepInTouchModal, setShowKeepInTouchModal] = useState(false);
+  const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [currentTab, setCurrentTab] = useState("home");
 
@@ -391,6 +393,7 @@ export const MobileView = ({
           contact={selectedContact}
           onClose={handleCloseEdit}
           onSave={handleSaveContact}
+          onFollowUpClick={() => setShowFollowUpModal(true)}
         />
       )}
 
@@ -403,6 +406,18 @@ export const MobileView = ({
             setSelectedContact(null);
           }}
           onConfirm={handleKeepInTouchConfirm}
+        />
+      )}
+
+      {showFollowUpModal && selectedContact && (
+        <FollowUpModal
+          isOpen={showFollowUpModal}
+          contact={selectedContact}
+          onClose={() => setShowFollowUpModal(false)}
+          onMarkAsSent={() => {
+            addActivity(`${selectedContact.name}さんにフォローアップメッセージを送信しました`, selectedContact.id.toString());
+            alert('送信済にしました ✨');
+          }}
         />
       )}
 
