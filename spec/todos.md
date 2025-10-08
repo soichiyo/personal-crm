@@ -77,9 +77,10 @@
   - Props: `isOpen`, `onClose`, `title`, `children`
   - アニメーション: 下からスライドイン（モバイル）、フェードイン（PC）
   - 背景タップで閉じる、ESCキーで閉じる
+  - モバイル横幅調整: px-4パディング + max-w-sm制約（AddModalと統一）
   - ファイル: `src/components/common/Modal.tsx`
   - 依存: なし
-  - **プロトタイプ注**: Tailwindのアニメーションクラスを使用して簡単に実装
+  - **プロトタイプ注**: 完全実装済み。Tailwindのアニメーションクラス使用。
 
 - ✅ **Toastコンポーネント**
   - 成功/エラー/情報メッセージを表示
@@ -172,10 +173,13 @@
 
 - ✅ **コンタクト編集モーダル**
   - 全画面モーダル（モバイル）
-  - [閉じる] / [保存] ヘッダー
+  - [< 戻る] ヘッダーのみ（iOS標準スタイル）
+  - 自動保存機能（500msデバウンス）
+  - 「変更は自動で保存されます」メッセージ表示
   - スクロール可能なコンテンツエリア
   - ファイル: `src/components/ContactEditModal.tsx`
-  - 依存: Modalコンポーネント、状態管理
+  - 依存: なし
+  - **プロトタイプ注**: 完全実装済み。自動保存とモーダル閉鎖のタイミングを分離（バグ修正済み）
 
 - ✅ **基本情報セクション**
   - プロフィール絵文字表示（役職ベース自動選択ロジック）
@@ -227,11 +231,12 @@
 
 - ✅ **新着コンタクトカードセクション**
   - セクションヘッダー: 「新着コンタクト」（絵文字削除済み）
-  - 未整理件数と進捗表示（例: 「未整理: 7件 (3/7 完了)」）
+  - 未整理件数表示（例: 「未整理: 7件」）
   - 未整理コンタクトが0件の場合: Empty State表示
+  - カードクリックで編集モーダルを開く機能（実装済み）
   - ファイル: `src/components/Home/NewContactsSection.tsx`
   - 依存: なし
-  - **プロトタイプ注**: 件数はコンタクト配列の長さから計算。useStateで管理。
+  - **プロトタイプ注**: 完全実装済み。カードクリックバグ（自動保存によるモーダル即時閉鎖）も修正済み。
 
 - ⬜ **カードスタック表示**
   - 最大5枚のカードを重ねて表示（奥行き感）
@@ -367,17 +372,25 @@
   - 依存: 設定モーダル
   - **プロトタイプ注**: 完全実装済み。実際のAIは使わず固定ロジック。
 
-- ⏸️ **誕生日オプション** _(プロトタイプでは後回し)_
-  - 見た目だけ実装し、機能は後期実装
-  - **プロトタイプ注**: 誕生日データがないため後回し
+- ✅ **誕生日デモデータ追加**
+  - Contact型にbirthday?フィールドを追加
+  - 佐藤 花子さんに誕生日データを追加
+  - 誕生日Notification（🎂アイコン付き）を追加
+  - 誕生日Reminder（type: 'birthday'）を追加
+  - ReminderSectionで誕生日を特別表示（🎂アイコン＋「誕生日です！」）
+  - 「今日のリマインダー」→「今日のイベント」にリネーム
+  - ファイル: `src/types/Contact.ts`, `src/data/sampleContacts.ts`, `src/data/sampleNotifications.ts`, `src/data/sampleReminders.ts`, `src/components/Home/ReminderSection.tsx`
+  - 依存: なし
+  - **プロトタイプ注**: 完全実装済み。誕生日がNotification + Reminderの両方で表示される。
 
 ### 4.3 Reminderセクション（P0）
 
-- ✅ **今日のReminderセクション**
-  - セクションタイトル: 「今日のリマインダー」（絵文字削除済み、日本語化済み）
-  - 期日到来したReminderをリスト表示
+- ✅ **今日のイベントセクション**
+  - セクションタイトル: 「今日のイベント」（「今日のリマインダー」から変更）
+  - 期日到来したReminderをリスト表示（フォローアップ、誕生日など）
   - contactIdから名前を取得して表示（「1さん」→「田中 太郎さん」）
-  - 該当なしの場合: Empty State（「今日のリマインダーはありません いい一日を！」）
+  - 誕生日は🎂アイコンと「誕生日です！」メッセージで特別表示
+  - 該当なしの場合: Empty State（「今日のイベントはありません いい一日を！」）
   - ファイル: `src/components/Home/ReminderSection.tsx`
   - 依存: なし
   - **プロトタイプ注**: 完全実装済み。Contactsプロパティを受け取り名前を解決。
@@ -466,28 +479,30 @@
 
 ### 6.1 Activityセクション（P1）
 
-- ⬜ **Recent Activityセクション**
-  - セクションタイトル: 「📊 最近のActivity」
+- ✅ **Recent Activityセクション**
+  - セクションタイトル: 「最近のアクティビティ」（絵文字削除済み）
   - 直近のActivityを時系列で表示（最大10件）
   - 該当なしの場合: Empty State（「まだアクティビティがありません」）
   - ファイル: `src/components/Home/ActivitySection.tsx`
   - 依存: なし
-  - **プロトタイプ注**: Activity配列を.slice(0, 10)で表示
+  - **プロトタイプ注**: 完全実装済み。Activity配列を.slice(0, 10)で表示
 
-- ⬜ **Activityカード**
+- ✅ **Activityカード**
   - アイコン: ✅（固定でOK）
   - メッセージ: 「佐藤さんに連絡しました」
   - タイムスタンプ: 相対時間（例: 「2時間前」）
-  - ファイル: `src/components/Home/ActivityCard.tsx`
+  - ファイル: `src/components/Home/ActivitySection.tsx`（統合済み）
   - 依存: Activityセクション
-  - **プロトタイプ注**: タップ遷移は後回し。見た目のみ。
+  - **プロトタイプ注**: 完全実装済み。タップ遷移は後回し。
 
-- ⬜ **Activity自動記録**
-  - フォローアップ送信済 → Activity配列に追加
-  - Reminder完了 → Activity配列に追加
-  - ファイル: 各アクションのハンドラー内で実装
+- ✅ **Activity自動記録**
+  - Reminder完了 → Activity配列に追加（実装済み）
+  - Contact編集完了 → Activity配列に追加（実装済み）
+  - KeepInTouch設定 → Activity配列に追加（実装済み）
+  - Archiveアクション → Activity配列に追加（実装済み）
+  - ファイル: `src/components/MobileView.tsx`（addActivity関数）
   - 依存: なし
-  - **プロトタイプ注**: 配列に{contactName, message, timestamp}を追加するだけ
+  - **プロトタイプ注**: 完全実装済み。Activity型に準拠（contactId, type, description, timestamp）
 
 ---
 
