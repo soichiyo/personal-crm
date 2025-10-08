@@ -13,6 +13,8 @@ import { Notification } from "../types/Notification";
 import { Reminder } from "../types/Reminder";
 import { Activity } from "../types/Activity";
 import { AddModal } from "./AddModal";
+import { ContactEditModal } from "./ContactEditModal";
+import { KeepInTouchModal } from "./KeepInTouchModal";
 import { NotificationIcon } from "./NotificationIcon";
 import { NotificationModal } from "./NotificationModal";
 import { ReminderSection } from "./Home/ReminderSection";
@@ -35,12 +37,31 @@ export const MobileView = ({
   const [contacts, setContacts] = useState(initialContacts);
   const [notifications] = useState(initialNotifications);
   const [reminders, setReminders] = useState(initialReminders);
-  const [activities] = useState(initialActivities);
+  const [activities, setActivities] = useState(initialActivities);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showKeepInTouchModal, setShowKeepInTouchModal] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [currentTab, setCurrentTab] = useState("home");
 
+  const addActivity = (description: string) => {
+    const newActivity = {
+      id: `activity-${Date.now()}`,
+      description,
+      timestamp: new Date(),
+    };
+    setActivities([newActivity, ...activities]);
+  };
+
   const handleReminderComplete = (id: string) => {
+    const reminder = reminders.find(r => r.id === id);
+    if (reminder) {
+      const contact = contacts.find(c => c.id.toString() === reminder.contactId);
+      if (contact) {
+        addActivity(`${contact.name}さんのリマインダーを完了しました`);
+      }
+    }
     setReminders(reminders.map(r =>
       r.id === id ? { ...r, completed: true } : r
     ));
@@ -51,17 +72,92 @@ export const MobileView = ({
   };
 
   const handleArchive = (id: number) => {
+    const contact = contacts.find(c => c.id === id);
+    if (contact) {
+      addActivity(`${contact.name}さんをアーカイブしました`);
+    }
     setContacts(contacts.map(c =>
       c.id === id ? { ...c, status: 'archived' as const } : c
     ));
   };
 
-  const handleKeepInTouch = (_id: number) => {
-    alert("Keep in Touch設定モーダル（張りぼて）");
+  const handleKeepInTouch = (id: number) => {
+    const contact = contacts.find(c => c.id === id);
+    if (contact) {
+      setSelectedContact(contact);
+      setShowKeepInTouchModal(true);
+    }
+  };
+
+  const handleKeepInTouchConfirm = (interval: string) => {
+    if (selectedContact) {
+      // 新しいReminderを作成
+      const dueDate = calculateDueDate(interval);
+      const newReminder = {
+        id: `reminder-${Date.now()}`,
+        contactId: selectedContact.id.toString(),
+        dueDate,
+        type: 'keep-in-touch' as const,
+        interval,
+        completed: false,
+      };
+
+      setReminders([...reminders, newReminder]);
+      setContacts(contacts.map(c =>
+        c.id === selectedContact.id ? { ...c, status: 'active' as const } : c
+      ));
+
+      // Activity追加
+      addActivity(`${selectedContact.name}さんのリマインダーを設定しました`);
+
+      setShowKeepInTouchModal(false);
+      setSelectedContact(null);
+      alert(`設定しました！✨\n${selectedContact.name}さんのリマインダーを作成しました`);
+    }
+  };
+
+  const calculateDueDate = (interval: string): Date => {
+    const now = new Date();
+    switch (interval) {
+      case '1week':
+        return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      case '3weeks':
+        return new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000);
+      case '1month':
+        return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      case 'ai':
+        // AIおまかせは2週間後を提案（モック）
+        return new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+      default:
+        return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    }
   };
 
   const handleLater = (_id: number) => {
     alert("後で確認（張りぼて）");
+  };
+
+  const handleCardClick = (contactId: number) => {
+    const contact = contacts.find(c => c.id === contactId);
+    if (contact) {
+      setSelectedContact(contact);
+      setShowEditModal(true);
+    }
+  };
+
+  const handleCloseEdit = () => {
+    if (selectedContact) {
+      addActivity(`${selectedContact.name}さんの情報を更新しました`);
+    }
+    setShowEditModal(false);
+    setSelectedContact(null);
+  };
+
+  const handleSaveContact = (updatedContact: Contact) => {
+    // 自動保存時はcontactsを更新するだけ（Activity追加なし、モーダルは閉じない）
+    setContacts(contacts.map(c =>
+      c.id === updatedContact.id ? updatedContact : c
+    ));
   };
 
   const renderTabContent = () => {
@@ -70,6 +166,7 @@ export const MobileView = ({
         <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
           <ReminderSection
             reminders={reminders}
+            contacts={contacts}
             onComplete={handleReminderComplete}
             onPostpone={handleReminderPostpone}
           />
@@ -78,6 +175,7 @@ export const MobileView = ({
             onArchive={handleArchive}
             onKeepInTouch={handleKeepInTouch}
             onLater={handleLater}
+            onCardClick={handleCardClick}
           />
           <ActivitySection activities={activities} />
         </div>
@@ -232,7 +330,7 @@ export const MobileView = ({
       </div>
 
       <div className="p-4 flex items-center justify-between bg-white border-b border-gray-200 shrink-0">
-        <h1 className="text-xl font-bold text-gray-900">Personal CRM</h1>
+        <h1 className="text-2xl">🏠</h1>
         <div className="flex gap-3">
           <NotificationIcon
             unreadCount={notifications.filter(n => !n.read).length}
@@ -285,6 +383,26 @@ export const MobileView = ({
       </button>
 
       {showAddModal && <AddModal onClose={() => setShowAddModal(false)} />}
+
+      {showEditModal && selectedContact && (
+        <ContactEditModal
+          contact={selectedContact}
+          onClose={handleCloseEdit}
+          onSave={handleSaveContact}
+        />
+      )}
+
+      {showKeepInTouchModal && selectedContact && (
+        <KeepInTouchModal
+          isOpen={showKeepInTouchModal}
+          contact={selectedContact}
+          onClose={() => {
+            setShowKeepInTouchModal(false);
+            setSelectedContact(null);
+          }}
+          onConfirm={handleKeepInTouchConfirm}
+        />
+      )}
 
       <NotificationModal
         isOpen={showNotificationModal}

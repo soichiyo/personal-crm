@@ -29,7 +29,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
     return (
       <section className="mb-6">
         <h2 className="text-base font-semibold text-gray-900 mb-3">
-          📊 最近のActivity
+          最近のアクティビティ
         </h2>
         <div className="bg-gray-50 rounded-xl p-6 text-center">
           <p className="text-sm text-gray-500">まだアクティビティがありません</p>
@@ -43,7 +43,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
   return (
     <section className="mb-6">
       <h2 className="text-base font-semibold text-gray-900 mb-3">
-        📊 最近のActivity
+        最近のアクティビティ
       </h2>
 
       <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">

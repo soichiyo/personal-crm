@@ -37,7 +37,7 @@
 
 ### 1.1 プロジェクト基盤（P0）
 
-- ⬜ **型定義の拡張**（プロトタイプ用簡易版）
+- ✅ **型定義の拡張**（プロトタイプ用簡易版）
   - `Contact` 型に以下フィールド追加:
     - `createdDate: Date` - 作成日付
     - `metLocation?: string` - 出会った場所
@@ -73,7 +73,7 @@
 
 ### 1.2 共通UIコンポーネント（P0）
 
-- ⬜ **Modalコンポーネント**
+- ✅ **Modalコンポーネント**
   - Props: `isOpen`, `onClose`, `title`, `children`
   - アニメーション: 下からスライドイン（モバイル）、フェードイン（PC）
   - 背景タップで閉じる、ESCキーで閉じる
@@ -81,21 +81,21 @@
   - 依存: なし
   - **プロトタイプ注**: Tailwindのアニメーションクラスを使用して簡単に実装
 
-- ⬜ **Toastコンポーネント**
+- ✅ **Toastコンポーネント**
   - 成功/エラー/情報メッセージを表示
   - 自動でフェードアウト（デフォルト3秒）
   - ファイル: `src/components/common/Toast.tsx`
   - 依存: なし
   - **プロトタイプ注**: react-hot-toastなどのライブラリ使用を検討
 
-- ⬜ **Loadingコンポーネント**
+- ✅ **Loadingコンポーネント**
   - スピナーアニメーション
   - テキスト表示オプション
   - ファイル: `src/components/common/Loading.tsx`
   - 依存: なし
   - **プロトタイプ注**: シンプルなCSS回転アニメーション
 
-- ⬜ **Buttonコンポーネント**
+- ✅ **Buttonコンポーネント**
   - バリアント: primary, secondary, danger, ghost
   - サイズ: sm, md, lg
   - アイコン付きオプション
@@ -225,8 +225,8 @@
 
 ### 3.1 カード表示UI（P0）
 
-- ⬜ **新着コンタクトカードセクション**
-  - セクションヘッダー: 「📇 新着コンタクト」
+- ✅ **新着コンタクトカードセクション**
+  - セクションヘッダー: 「新着コンタクト」（絵文字削除済み）
   - 未整理件数と進捗表示（例: 「未整理: 7件 (3/7 完了)」）
   - 未整理コンタクトが0件の場合: Empty State表示
   - ファイル: `src/components/Home/NewContactsSection.tsx`
@@ -272,28 +272,27 @@
 
 ### 3.3 カードアクション（P0）
 
-- ⬜ **アクションボタンエリア**
-  - カード下部に3つのボタン配置
-  - [🗄️ Archive] / [💌 Keep in Touch] / [⏰ Later]
+- ✅ **アクションボタンエリア**
+  - カード下部に3つのボタン配置（左から順に）
+  - [⏰ あとで] / [💌 連絡する] / [🗄️ アーカイブ]（日本語化済み、Keepボタンを青色に変更）
   - ファイル: `src/components/Home/CardActions.tsx`
   - 依存: コンタクトカード
   - **プロトタイプ注**: 3つのボタンを横並びで配置
 
-- ⬜ **Archiveアクション**
-  - ボタンタップでカードをスワイプアウト（左方向アニメーション）
+- ✅ **Archiveアクション**
+  - ボタンタップでstatusを'archived'に変更（アニメーションは未実装）
   - コンタクト配列から削除（またはstatusを'archived'に変更）
-  - 次のカードを表示
-  - ファイル: `src/components/Home/CardActions.tsx`（Archive処理）
+  - ファイル: `src/components/Home/NewContactsSection.tsx`（Archive処理）
   - 依存: アクションボタンエリア
-  - **プロトタイプ注**: CSS transitionでアニメーション。配列操作はuseStateで。
+  - **プロトタイプ注**: アニメーションは後回し。状態変更のみ実装済み。
 
-- ⬜ **Keep in Touchアクション**
+- ✅ **Keep in Touchアクション**
   - ボタンタップでKeep-in-Touch設定モーダルを開く
-  - ファイル: `src/components/Home/CardActions.tsx`（Keep処理）
+  - ファイル: `src/components/KeepInTouchModal.tsx` + `MobileView.tsx`（Keep処理）
   - 依存: アクションボタンエリア
-  - **プロトタイプ注**: モーダル表示フラグをtrueにするだけ
+  - **プロトタイプ注**: 完全実装済み。Reminder作成機能も含む。
 
-- ⬜ **Laterアクション**
+- 🟦 **Laterアクション**
   - ボタンタップでカードをスワイプアウト（上方向アニメーション）
   - カードを配列の最後尾に移動
   - 次のカードを表示
@@ -328,47 +327,45 @@
 
 ### 4.1 Keep-in-Touch設定モーダル（P0）
 
-- ⬜ **設定モーダルUI**
-  - タイトル: 「〇〇さん いつ連絡しますか？」
-  - 選択肢リスト: 1週間後 / 3週間後 / 1ヶ月後
+- ✅ **設定モーダルUI**
+  - タイトル: 「〇〇さん いつ連絡しますか？」（実装済み）
+  - 選択肢リスト: 1週間後 / 3週間後 / 1ヶ月後 / ✨ AIにおまかせ
   - [キャンセル] / [設定する] ボタン
   - ファイル: `src/components/KeepInTouchModal.tsx`
   - 依存: Modalコンポーネント
-  - **プロトタイプ注**: シンプルなモーダル。選択肢はボタンまたはラジオボタン。
+  - **プロトタイプ注**: 完全実装済み。
 
-- ⬜ **固定期間選択**
-  - ラジオボタンまたはリスト選択
-  - 選択状態の視覚的フィードバック（選択時に背景色変更）
-  - ファイル: `src/components/KeepInTouchModal/IntervalSelector.tsx`
+- ✅ **固定期間選択**
+  - ボタン形式のリスト選択
+  - 選択状態の視覚的フィードバック（選択時に青色ハイライト）
+  - ファイル: `src/components/KeepInTouchModal.tsx`（統合済み）
   - 依存: 設定モーダル
-  - **プロトタイプ注**: useStateで選択状態を管理
+  - **プロトタイプ注**: useStateで選択状態を管理済み
 
-- ⬜ **Reminder作成処理**
+- ✅ **Reminder作成処理**
   - 選択された期間をもとにReminder生成
-  - `dueDate` = 現在日時 + 期間
+  - `dueDate` = 現在日時 + 期間（calculateDueDate関数で実装）
   - Reminderを親コンポーネントのuseStateに追加
-  - ファイル: `src/components/KeepInTouchModal.tsx`（設定処理）
+  - ファイル: `src/components/MobileView.tsx`（handleKeepInTouchConfirm）
   - 依存: 固定期間選択
-  - **プロトタイプ注**: 簡単な日付計算。Reminder配列に追加するだけ。
+  - **プロトタイプ注**: 完全実装済み。新規Reminder作成とContact status変更を含む。
 
-- ⬜ **設定完了フィードバック**
-  - 「設定しました！✨」トーストメッセージ
-  - カードをスワイプアウト（右方向アニメーション）
-  - 次のカードを表示
-  - ファイル: `src/components/KeepInTouchModal.tsx`
-  - 依存: Toastコンポーネント
-  - **プロトタイプ注**: アニメーション後に配列から削除
+- 🟦 **設定完了フィードバック**
+  - 「設定しました！✨」alertメッセージ（アニメーションは未実装）
+  - カードstatus変更でリストから削除
+  - ファイル: `src/components/MobileView.tsx`
+  - 依存: なし
+  - **プロトタイプ注**: アニメーションは後回し。alertで代替中。
 
 ### 4.2 AI・誕生日オプション（P1）
 
-- ⬜ **AIにおまかせオプション**
-  - 選択肢に「✨ AIにおまかせ」を追加
-  - 選択時、固定で2週間後を提案（モック）
-  - 推奨理由を表示（例: 「ビジネス関係の初回フォローアップに最適です」）
-  - [この提案で設定] ボタン
-  - ファイル: `src/components/KeepInTouchModal/AIOption.tsx`
+- ✅ **AIにおまかせオプション**
+  - 選択肢に「✨ AIにおまかせ」を追加済み
+  - 選択時、固定で2週間後を提案（モック実装済み）
+  - 推奨理由を表示（「ビジネス関係の初回フォローアップに最適です」）
+  - ファイル: `src/components/KeepInTouchModal.tsx`
   - 依存: 設定モーダル
-  - **プロトタイプ注**: 実際のAIは使わない。固定テキストとロジックで実装。
+  - **プロトタイプ注**: 完全実装済み。実際のAIは使わず固定ロジック。
 
 - ⏸️ **誕生日オプション** _(プロトタイプでは後回し)_
   - 見た目だけ実装し、機能は後期実装
@@ -376,28 +373,28 @@
 
 ### 4.3 Reminderセクション（P0）
 
-- ⬜ **今日のReminderセクション**
-  - セクションタイトル: 「📅 今日のReminder」
+- ✅ **今日のReminderセクション**
+  - セクションタイトル: 「今日のリマインダー」（絵文字削除済み、日本語化済み）
   - 期日到来したReminderをリスト表示
-  - 該当なしの場合: Empty State（「今日のReminderはありません いい一日を！」）
+  - contactIdから名前を取得して表示（「1さん」→「田中 太郎さん」）
+  - 該当なしの場合: Empty State（「今日のリマインダーはありません いい一日を！」）
   - ファイル: `src/components/Home/ReminderSection.tsx`
   - 依存: なし
-  - **プロトタイプ注**: Reminder配列をフィルタリング（dueDate <= 今日）して表示
+  - **プロトタイプ注**: 完全実装済み。Contactsプロパティを受け取り名前を解決。
 
-- ⬜ **Reminderカード**
-  - コンタクト名表示
+- ✅ **Reminderカード**
+  - コンタクト名表示（contactIdからcontacts配列で検索）
   - メッセージ: 「フォローアップの時期です」
   - [完了] / [延期] ボタン
-  - ファイル: `src/components/Home/ReminderCard.tsx`
+  - ファイル: `src/components/Home/ReminderSection.tsx`（統合済み）
   - 依存: Reminderセクション
-  - **プロトタイプ注**: シンプルなカードUI。タップ遷移は後回し。
+  - **プロトタイプ注**: 完全実装済み。
 
-- ⬜ **完了アクション**
+- ✅ **完了アクション**
   - [完了] ボタンタップでReminderを既読化（`completed: true`）
-  - チェックマークアニメーション
-  - ファイル: `src/components/Home/ReminderCard.tsx`（完了処理）
+  - ファイル: `src/components/MobileView.tsx`（handleReminderComplete）
   - 依存: なし
-  - **プロトタイプ注**: 配列から削除またはcompletedフラグをtrue
+  - **プロトタイプ注**: completedフラグをtrueに設定。アニメーションは省略。
 
 - ⏸️ **延期アクション** _(プロトタイプでは後回し)_
   - ボタンは配置するが、機能は後期実装

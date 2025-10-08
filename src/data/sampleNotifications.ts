@@ -4,6 +4,16 @@ export const sampleNotifications: Notification[] = [
   {
     id: '1',
     type: 'general',
+    contactId: '2',
+    title: '🎂 誕生日のお知らせ',
+    message: '佐藤 花子さんの誕生日です！お祝いメッセージを送りましょう',
+    timestamp: new Date(Date.now() - 1000 * 60 * 10), // 10分前
+    read: false,
+    actionUrl: '/contacts/2',
+  },
+  {
+    id: '1-1',
+    type: 'general',
     contactId: '1',
     title: '新しいコンタクトが追加されました',
     message: '山田太郎さんの情報が追加されました。フォローアップを検討してください。',

@@ -36,7 +36,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 animate-in fade-in duration-200"
@@ -44,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
       />
 
       {/* Modal Content */}
-      <div className="relative w-full sm:w-auto sm:min-w-[400px] sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl shadow-xl animate-in slide-in-from-bottom sm:fade-in duration-300 max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-sm mx-auto sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl shadow-xl animate-in slide-in-from-bottom sm:fade-in duration-300 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>

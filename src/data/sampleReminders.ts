@@ -2,6 +2,14 @@ import { Reminder } from '../types/Reminder';
 
 export const sampleReminders: Reminder[] = [
   {
+    id: '0',
+    contactId: '2',
+    dueDate: new Date(), // 今日 - 佐藤花子さんの誕生日
+    type: 'birthday',
+    interval: 'birthday',
+    completed: false,
+  },
+  {
     id: '1',
     contactId: '1',
     dueDate: new Date(), // 今日

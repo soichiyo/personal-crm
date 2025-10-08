@@ -31,6 +31,7 @@ export const sampleContacts: Contact[] = [
     tags: ["スタートアップ", "プロダクト"],
     profileEmoji: "👩‍💼",
     status: "active",
+    birthday: new Date("1990-10-10"), // 10月10日生まれ（明後日）
   },
   {
     id: 3,

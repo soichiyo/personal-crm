@@ -1,18 +1,25 @@
 import React from 'react';
 import { Reminder } from '../../types/Reminder';
+import { Contact } from '../../types/Contact';
 import { Clock } from 'lucide-react';
 
 interface ReminderSectionProps {
   reminders: Reminder[];
+  contacts: Contact[];
   onComplete?: (id: string) => void;
   onPostpone?: (id: string) => void;
 }
 
 export const ReminderSection: React.FC<ReminderSectionProps> = ({
   reminders,
+  contacts,
   onComplete,
   onPostpone,
 }) => {
+  const getContactName = (contactId: string) => {
+    const contact = contacts.find(c => c.id.toString() === contactId);
+    return contact ? contact.name : `連絡先${contactId}`;
+  };
   const todayReminders = reminders.filter((r) => {
     const today = new Date();
     const dueDate = new Date(r.dueDate);
@@ -28,10 +35,10 @@ export const ReminderSection: React.FC<ReminderSectionProps> = ({
     return (
       <section className="mb-6">
         <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          📅 今日のReminder
+          今日のイベント
         </h2>
         <div className="bg-gray-50 rounded-xl p-6 text-center">
-          <p className="text-sm text-gray-500">今日のReminderはありません</p>
+          <p className="text-sm text-gray-500">今日のイベントはありません</p>
           <p className="text-xs text-gray-400 mt-1">いい一日を！</p>
         </div>
       </section>
@@ -41,7 +48,7 @@ export const ReminderSection: React.FC<ReminderSectionProps> = ({
   return (
     <section className="mb-6">
       <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
-        📅 今日のReminder
+        今日のイベント
         <span className="text-xs font-normal text-gray-500">
           ({todayReminders.length}件)
         </span>
@@ -56,12 +63,12 @@ export const ReminderSection: React.FC<ReminderSectionProps> = ({
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <p className="text-sm font-semibold text-gray-900 mb-1">
-                  {/* contactNameを使用 - 後でcontactIdから取得する実装も可能 */}
-                  {reminder.contactId}さん
+                  {reminder.type === 'birthday' && '🎂 '}
+                  {getContactName(reminder.contactId)}さん
                 </p>
                 <p className="text-xs text-gray-600 flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  フォローアップの時期です
+                  {reminder.type === 'birthday' ? '誕生日です！' : 'フォローアップの時期です'}
                 </p>
               </div>
             </div>

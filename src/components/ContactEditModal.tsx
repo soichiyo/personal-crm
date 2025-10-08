@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft } from 'lucide-react';
 import { Contact } from '../types/Contact';
 import { BasicInfo } from './ContactEditModal/BasicInfo';
 import { MetInfo } from './ContactEditModal/MetInfo';
@@ -8,25 +8,35 @@ import { NoteSection } from './ContactEditModal/NoteSection';
 import { FollowUpButton } from './ContactEditModal/FollowUpButton';
 
 interface ContactEditModalProps {
-  isOpen: boolean;
+  contact: Contact;
   onClose: () => void;
-  onSave: (contact: Partial<Contact>) => void;
-  initialContact?: Partial<Contact>;
+  onSave: (contact: Contact) => void;
 }
 
 export const ContactEditModal: React.FC<ContactEditModalProps> = ({
-  isOpen,
+  contact: initialContact,
   onClose,
   onSave,
-  initialContact = {},
 }) => {
-  const [contact, setContact] = useState<Partial<Contact>>({
-    createdDate: new Date(),
-    tags: ['紙名刺読み取り'],
-    status: 'new',
-    ...initialContact,
-  });
+  const [contact, setContact] = useState<Contact>(initialContact);
   const [note, setNote] = useState('');
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  // 初回レンダリング時はスキップするフラグ
+  useEffect(() => {
+    setIsFirstRender(false);
+  }, []);
+
+  // 自動保存: contactが変更されたら自動的にonSaveを呼ぶ（初回レンダリング時を除く）
+  useEffect(() => {
+    if (isFirstRender) return;
+
+    const timer = setTimeout(() => {
+      onSave(contact);
+    }, 500); // 500ms後に自動保存（デバウンス）
+
+    return () => clearTimeout(timer);
+  }, [contact]); // onSaveを依存配列から除外
 
   const handleChange = (field: keyof Contact, value: any) => {
     setContact((prev) => ({ ...prev, [field]: value }));
@@ -50,19 +60,9 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
     }));
   };
 
-  const handleSave = () => {
-    if (!contact.name) {
-      alert('名前を入力してください');
-      return;
-    }
-    onSave(contact);
-  };
-
   const handleFollowUp = () => {
     alert('フォローアップ提案機能は後で実装します');
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="absolute inset-0 z-50 bg-white flex flex-col">
@@ -74,24 +74,22 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
       </div>
 
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between shrink-0">
+      <div className="px-4 py-3 border-b border-gray-200 flex items-center shrink-0">
         <button
           onClick={onClose}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors"
         >
-          <X className="w-6 h-6 text-gray-900" />
-        </button>
-        <h2 className="text-lg font-semibold text-gray-900">コンタクト編集</h2>
-        <button
-          onClick={handleSave}
-          className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
-        >
-          保存
+          <ChevronLeft className="w-5 h-5" />
+          <span className="text-base font-medium">戻る</span>
         </button>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6 space-y-8">
+        {/* 自動保存メッセージ */}
+        <div className="text-center">
+          <p className="text-xs text-gray-400">変更は自動で保存されます</p>
+        </div>
         {/* 基本情報 */}
         <section>
           <h3 className="text-base font-semibold text-gray-900 mb-4">

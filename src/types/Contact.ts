@@ -15,4 +15,5 @@ export interface Contact {
   profileEmoji?: string;
   status: 'new' | 'archived' | 'active';
   aiSearchStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+  birthday?: Date; // 誕生日
 }

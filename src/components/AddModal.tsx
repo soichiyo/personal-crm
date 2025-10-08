@@ -25,10 +25,18 @@ export const AddModal = ({ onClose }: AddModalProps) => {
 
   const handleManualInput = () => {
     setNewContact({
+      id: Date.now(), // 一時的なID
+      name: "",
+      company: "",
+      title: "",
       source: "手動入力",
+      metAt: `${new Date().toLocaleDateString('ja-JP')} - 手動入力`,
       createdDate: new Date(),
       tags: [],
       status: "new",
+      avatar: "👤",
+      profileEmoji: "👤",
+      priority: "medium",
     });
     setStep("edit");
   };
@@ -41,21 +49,34 @@ export const AddModal = ({ onClose }: AddModalProps) => {
   const handleOCRComplete = () => {
     // OCR完了後、モックデータを設定して編集画面へ
     setNewContact({
+      id: Date.now(), // 一時的なID
       name: "山田 太郎",
       company: "ABC株式会社",
       title: "営業部長",
       source: "名刺スキャン",
+      metAt: `${new Date().toLocaleDateString('ja-JP')} - 名刺読み取り`,
       createdDate: new Date(),
       tags: ["紙名刺読み取り"],
       status: "new",
       avatar: "👨‍💼",
+      profileEmoji: "👨‍💼",
+      priority: "medium",
     });
     setStep("edit");
   };
 
   const handleSave = (contact: Partial<Contact>) => {
-    // 保存処理（モック）
-    console.log("Saved contact:", contact);
+    // 自動保存時の処理（編集中の一時保存）
+    setNewContact(contact);
+  };
+
+  const handleCloseScanner = () => {
+    setStep("menu");
+  };
+
+  const handleCloseEdit = () => {
+    // 編集画面を閉じるときに確定処理
+    console.log("Saved contact:", newContact);
 
     // Toastを表示
     setToastType("success");
@@ -67,14 +88,6 @@ export const AddModal = ({ onClose }: AddModalProps) => {
       setShowToast(false);
       onClose();
     }, 800);
-  };
-
-  const handleCloseScanner = () => {
-    setStep("menu");
-  };
-
-  const handleCloseEdit = () => {
-    setStep("menu");
   };
 
   // メニュー画面
@@ -154,14 +167,13 @@ export const AddModal = ({ onClose }: AddModalProps) => {
   }
 
   // 編集画面
-  if (step === "edit") {
+  if (step === "edit" && newContact.id) {
     return (
       <>
         <ContactEditModal
-          isOpen={true}
+          contact={newContact as Contact}
           onClose={handleCloseEdit}
           onSave={handleSave}
-          initialContact={newContact}
         />
         <Toast
           type={toastType}
