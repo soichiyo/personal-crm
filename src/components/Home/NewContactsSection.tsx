@@ -49,11 +49,28 @@ export const NewContactsSection: React.FC<NewContactsSectionProps> = ({
           >
             {/* カード内容 */}
             <div
-              className="mb-4 cursor-pointer hover:bg-gray-50 -m-4 p-4 rounded-t-xl transition-colors"
+              className="mb-4 cursor-pointer hover:bg-gray-50 -m-4 p-4 rounded-t-xl transition-colors relative"
               onClick={() => onCardClick && onCardClick(contact.id)}
             >
+              {/* Newバッジ（未開封タグがある場合） */}
+              {contact.tags?.includes('未開封') && (
+                <div className="absolute top-2 right-2 px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded-full shadow-sm">
+                  NEW
+                </div>
+              )}
+
               <div className="flex items-center gap-3 mb-3">
-                <div className="text-4xl">{contact.avatar}</div>
+                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl overflow-hidden shrink-0">
+                  {contact.photoUrl ? (
+                    <img
+                      src={contact.photoUrl}
+                      alt={contact.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>{contact.avatar}</span>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-base font-bold text-gray-900 truncate">
                     {contact.name}
@@ -103,19 +120,19 @@ export const NewContactsSection: React.FC<NewContactsSectionProps> = ({
                 onClick={() => onLater && onLater(contact.id)}
                 className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
               >
-                ⏰ あとで
+                あとで
               </button>
               <button
                 onClick={() => onKeepInTouch && onKeepInTouch(contact.id)}
-                className="flex-1 px-3 py-2 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
               >
-                💌 連絡する
+                連絡する
               </button>
               <button
                 onClick={() => onArchive && onArchive(contact.id)}
                 className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
               >
-                🗄️ アーカイブ
+                アーカイブ
               </button>
             </div>
           </div>

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Contact } from '../types/Contact';
-import { Modal } from './common/Modal';
-import { Copy, Clock, Check } from 'lucide-react';
-import { generateFollowUpSuggestion } from '../utils/aiFollowUpGenerator';
+import React, { useState } from "react";
+import { Contact } from "../types/Contact";
+import { Modal } from "./common/Modal";
+import { Copy, Clock, Check } from "lucide-react";
+import { generateFollowUpSuggestion } from "../utils/aiFollowUpGenerator";
 
 interface FollowUpModalProps {
   isOpen: boolean;
@@ -30,14 +30,14 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
         onClose();
       }, 1000);
     } catch (err) {
-      console.error('Failed to copy:', err);
-      alert('コピーに失敗しました');
+      console.error("Failed to copy:", err);
+      alert("コピーに失敗しました");
     }
   };
 
   const handleLater = () => {
     // 後で機能は後期実装
-    alert('後で確認（張りぼて）');
+    alert("後で確認（張りぼて）");
     onClose();
   };
 

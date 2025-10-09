@@ -1,28 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronLeft } from 'lucide-react';
-import { Contact } from '../types/Contact';
-import { BasicInfo } from './ContactEditModal/BasicInfo';
-import { MetInfo } from './ContactEditModal/MetInfo';
-import { TagSection } from './ContactEditModal/TagSection';
-import { NoteSection } from './ContactEditModal/NoteSection';
-import { FollowUpButton } from './ContactEditModal/FollowUpButton';
+import React, { useState, useEffect } from "react";
+import { ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { Contact } from "../types/Contact";
+import { BasicInfo } from "./ContactEditModal/BasicInfo";
+import { BioSection } from "./ContactEditModal/BioSection";
+import { OrganizationInfo } from "./ContactEditModal/OrganizationInfo";
+import { SocialInfo } from "./ContactEditModal/SocialInfo";
+import { ContentUrlsInfo } from "./ContactEditModal/ContentUrlsInfo";
+import { MetInfo } from "./ContactEditModal/MetInfo";
+import { TagSection } from "./ContactEditModal/TagSection";
+import { DeepSearchButton } from "./ContactEditModal/DeepSearchButton";
 
 interface ContactEditModalProps {
   contact: Contact;
   onClose: () => void;
   onSave: (contact: Contact) => void;
-  onFollowUpClick?: () => void;
+  onDeepSearchClick?: () => void;
 }
 
 export const ContactEditModal: React.FC<ContactEditModalProps> = ({
   contact: initialContact,
   onClose,
   onSave,
-  onFollowUpClick,
+  onDeepSearchClick,
 }) => {
   const [contact, setContact] = useState<Contact>(initialContact);
-  const [note, setNote] = useState('');
   const [isFirstRender, setIsFirstRender] = useState(true);
+  const [showDetailedInfo, setShowDetailedInfo] = useState(false);
 
   // 初回レンダリング時はスキップするフラグ
   useEffect(() => {
@@ -46,7 +49,7 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
 
   const handleAddTag = () => {
     // タグ追加のモック - 実際はモーダルを開く
-    const newTag = prompt('タグを入力してください');
+    const newTag = prompt("タグを入力してください");
     if (newTag && contact.tags) {
       setContact((prev) => ({
         ...prev,
@@ -62,9 +65,9 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
     }));
   };
 
-  const handleFollowUp = () => {
-    if (onFollowUpClick) {
-      onFollowUpClick();
+  const handleDeepSearch = () => {
+    if (onDeepSearchClick) {
+      onDeepSearchClick();
     }
   };
 
@@ -94,12 +97,67 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
         <div className="text-center">
           <p className="text-xs text-gray-400">変更は自動で保存されます</p>
         </div>
+
         {/* 基本情報 */}
         <section>
           <h3 className="text-base font-semibold text-gray-900 mb-4">
             基本情報
           </h3>
           <BasicInfo contact={contact} onChange={handleChange} />
+        </section>
+
+        {/* 自己紹介 */}
+        <section>
+          <h3 className="text-base font-semibold text-gray-900 mb-4">
+            自己紹介
+          </h3>
+          <BioSection contact={contact} onChange={handleChange} />
+        </section>
+
+        {/* 詳細情報（折りたたみ可能） */}
+        <section>
+          <button
+            onClick={() => setShowDetailedInfo(!showDetailedInfo)}
+            className="w-full flex items-center justify-between py-3 px-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+            type="button"
+          >
+            <h3 className="text-base font-semibold text-gray-900">
+              詳細情報を{showDetailedInfo ? "非表示" : "追加"}
+            </h3>
+            {showDetailedInfo ? (
+              <ChevronUp className="w-5 h-5 text-gray-600" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-600" />
+            )}
+          </button>
+
+          {showDetailedInfo && (
+            <div className="mt-6 space-y-8">
+              {/* 組織情報 */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-4">
+                  組織情報
+                </h4>
+                <OrganizationInfo contact={contact} onChange={handleChange} />
+              </div>
+
+              {/* SNSリンク */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-4">
+                  SNSアカウント
+                </h4>
+                <SocialInfo contact={contact} onChange={handleChange} />
+              </div>
+
+              {/* コンテンツURL */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-4">
+                  コンテンツ・ポートフォリオ
+                </h4>
+                <ContentUrlsInfo contact={contact} onChange={handleChange} />
+              </div>
+            </div>
+          )}
         </section>
 
         {/* 出会い情報 */}
@@ -120,15 +178,9 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
           />
         </section>
 
-        {/* メモ */}
+        {/* 人物検索ボタン */}
         <section>
-          <h3 className="text-base font-semibold text-gray-900 mb-4">メモ</h3>
-          <NoteSection note={note} onChange={setNote} />
-        </section>
-
-        {/* フォローアップボタン */}
-        <section>
-          <FollowUpButton onClick={handleFollowUp} />
+          <DeepSearchButton onClick={handleDeepSearch} />
         </section>
       </div>
     </div>

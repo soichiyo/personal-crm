@@ -1,23 +1,35 @@
 import { useState } from "react";
 import { Camera, Edit3 } from "lucide-react";
-import { BusinessCardScanner } from "./AddModal/BusinessCardScanner";
+import {
+  BusinessCardScanner,
+  CapturedPhoto,
+} from "./AddModal/BusinessCardScanner";
+import { PhotoPreviewGrid } from "./AddModal/PhotoPreviewGrid";
 import { OCRLoading } from "./AddModal/OCRLoading";
 import { ContactEditModal } from "./ContactEditModal";
-import { Toast, ToastType } from "./common/Toast";
+import { Flash, FlashType } from "./common/Flash";
 import { Contact } from "../types/Contact";
 
 interface AddModalProps {
   onClose: () => void;
+  onAddContacts?: (contacts: Contact[]) => void; // 複数コンタクト追加用コールバック
 }
 
-type FlowStep = "menu" | "scanner" | "ocr-loading" | "edit" | "success";
+type FlowStep =
+  | "menu"
+  | "scanner"
+  | "preview"
+  | "ocr-loading"
+  | "edit"
+  | "success";
 
-export const AddModal = ({ onClose }: AddModalProps) => {
+export const AddModal = ({ onClose, onAddContacts }: AddModalProps) => {
   const [step, setStep] = useState<FlowStep>("menu");
   const [newContact, setNewContact] = useState<Partial<Contact>>({});
-  const [showToast, setShowToast] = useState(false);
-  const [toastType, setToastType] = useState<ToastType>("success");
-  const [toastMessage, setToastMessage] = useState("");
+  const [showFlash, setShowFlash] = useState(false);
+  const [flashType, setFlashType] = useState<FlashType>("success");
+  const [flashMessage, setFlashMessage] = useState("");
+  const [capturedPhotos, setCapturedPhotos] = useState<CapturedPhoto[]>([]); // 撮影した写真
 
   const handleCardScan = () => {
     setStep("scanner");
@@ -30,7 +42,7 @@ export const AddModal = ({ onClose }: AddModalProps) => {
       company: "",
       title: "",
       source: "手動入力",
-      metAt: `${new Date().toLocaleDateString('ja-JP')} - 手動入力`,
+      metAt: `${new Date().toLocaleDateString("ja-JP")} - 手動入力`,
       createdDate: new Date(),
       tags: [],
       status: "new",
@@ -41,39 +53,120 @@ export const AddModal = ({ onClose }: AddModalProps) => {
     setStep("edit");
   };
 
-  const handleScanCapture = () => {
-    // スキャナーからOCRローディングへ
+  const handleScanCapture = (photos: CapturedPhoto[]) => {
+    // スキャナーからプレビュー画面へ（撮影した写真を記録）
+    setCapturedPhotos(photos);
+    setStep("preview");
+  };
+
+  const handlePhotoRemove = (photoId: string) => {
+    // 写真を削除
+    setCapturedPhotos(capturedPhotos.filter((p) => p.id !== photoId));
+  };
+
+  const handlePreviewConfirm = () => {
+    // プレビュー確認後、OCRローディングへ
     setStep("ocr-loading");
   };
 
-  const handleOCRComplete = () => {
-    // OCR完了後、モックデータを設定して編集画面へ
-    setNewContact({
-      id: Date.now(), // 一時的なID
-      name: "山田 太郎",
-      company: "ABC株式会社",
-      title: "営業部長",
+  const handlePreviewBack = () => {
+    // プレビューからスキャナーに戻る
+    setStep("scanner");
+  };
+
+  const generateMockContact = (index: number): Contact => {
+    const mockNames = [
+      {
+        name: "山田 太郎",
+        company: "ABC株式会社",
+        title: "営業部長",
+        emoji: "👨‍💼",
+      },
+      {
+        name: "佐藤 花子",
+        company: "XYZ Corporation",
+        title: "マーケティング担当",
+        emoji: "👩‍💼",
+      },
+      {
+        name: "鈴木 次郎",
+        company: "Tech Innovations",
+        title: "エンジニア",
+        emoji: "👨‍💻",
+      },
+      {
+        name: "田中 美咲",
+        company: "Design Studio",
+        title: "デザイナー",
+        emoji: "🎨",
+      },
+      {
+        name: "高橋 健一",
+        company: "Venture Capital",
+        title: "投資家",
+        emoji: "💼",
+      },
+    ];
+
+    const contact = mockNames[index % mockNames.length];
+
+    return {
+      id: Date.now() + index,
+      name: contact.name,
+      company: contact.company,
+      title: contact.title,
       source: "名刺スキャン",
-      metAt: `${new Date().toLocaleDateString('ja-JP')} - 名刺読み取り`,
+      metAt: `${new Date().toLocaleDateString("ja-JP")} - 名刺読み取り`,
       createdDate: new Date(),
-      tags: ["紙名刺読み取り"],
+      tags: ["紙名刺読み取り", "未開封"],
       status: "new",
-      avatar: "👨‍💼",
-      profileEmoji: "👨‍💼",
+      avatar: contact.emoji,
+      profileEmoji: contact.emoji,
       priority: "medium",
-    });
+    };
+  };
 
-    // OCR完了時にToastを表示
-    setToastType("success");
-    setToastMessage("作成されました！");
-    setShowToast(true);
+  const handleOCRComplete = () => {
+    const photoCount = capturedPhotos.length;
 
-    // 1秒後にToastを非表示
-    setTimeout(() => {
-      setShowToast(false);
-    }, 1000);
+    // 複数枚の場合、編集画面をスキップしてHomeに直接追加
+    if (photoCount > 1) {
+      const newContacts: Contact[] = [];
+      for (let i = 0; i < photoCount; i++) {
+        newContacts.push(generateMockContact(i));
+      }
 
-    setStep("edit");
+      // 親コンポーネントに複数コンタクトを渡す
+      if (onAddContacts) {
+        onAddContacts(newContacts);
+      }
+
+      // Flash表示（上部から）
+      setFlashType("success");
+      setFlashMessage(`${photoCount}件のコンタクトが作成されました！`);
+      setShowFlash(true);
+
+      // 1.5秒後にFlashを非表示にしてモーダルを閉じる
+      setTimeout(() => {
+        setShowFlash(false);
+        onClose();
+      }, 1500);
+    } else {
+      // 1枚の場合は従来通り編集画面へ
+      setNewContact(generateMockContact(0));
+
+      // Flash表示
+      setFlashType("success");
+      setFlashMessage("コンタクトが作成されました！");
+      setShowFlash(true);
+
+      // 1秒後にFlashを非表示
+      setTimeout(() => {
+        setShowFlash(false);
+      }, 1000);
+
+      setStep("edit");
+    }
   };
 
   const handleSave = (contact: Partial<Contact>) => {
@@ -162,9 +255,34 @@ export const AddModal = ({ onClose }: AddModalProps) => {
     );
   }
 
+  // プレビュー画面
+  if (step === "preview") {
+    return (
+      <PhotoPreviewGrid
+        photos={capturedPhotos}
+        onRemove={handlePhotoRemove}
+        onConfirm={handlePreviewConfirm}
+        onBack={handlePreviewBack}
+      />
+    );
+  }
+
   // OCRローディング画面
   if (step === "ocr-loading") {
-    return <OCRLoading onComplete={handleOCRComplete} />;
+    return (
+      <>
+        <OCRLoading
+          onComplete={handleOCRComplete}
+          cardCount={capturedPhotos.length}
+        />
+        <Flash
+          type={flashType}
+          message={flashMessage}
+          isVisible={showFlash}
+          onClose={() => setShowFlash(false)}
+        />
+      </>
+    );
   }
 
   // 編集画面
@@ -176,11 +294,11 @@ export const AddModal = ({ onClose }: AddModalProps) => {
           onClose={handleCloseEdit}
           onSave={handleSave}
         />
-        <Toast
-          type={toastType}
-          message={toastMessage}
-          isVisible={showToast}
-          onClose={() => setShowToast(false)}
+        <Flash
+          type={flashType}
+          message={flashMessage}
+          isVisible={showFlash}
+          onClose={() => setShowFlash(false)}
         />
       </>
     );

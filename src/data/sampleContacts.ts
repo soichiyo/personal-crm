@@ -32,6 +32,38 @@ export const sampleContacts: Contact[] = [
     profileEmoji: "👩‍💼",
     status: "active",
     birthday: new Date("1990-10-10"), // 10月10日生まれ（明後日）
+
+    // 1009-02拡張フィールド（プレーリーカードからインポート）
+    prairieCardUrl: "https://prairie.cards/satoh-hanako",
+    nameReading: "さとう はなこ",
+    tagline: "テクノロジーで世界を変える",
+    bio: "XYZ Corporationでプロダクトマネージャーとして、スタートアップエコシステムの活性化に取り組んでいます。元エンジニアの経験を活かし、ユーザー中心のプロダクト開発を推進。テック業界で10年以上の経験があり、特にSaaS領域に精通しています。",
+    phone: "090-1234-5678",
+    email: "hanako.sato@xyz-corp.com",
+
+    organization: {
+      name: "XYZ Corporation",
+      title: "Product Manager",
+      phone: "03-5555-1234",
+      address: "東京都渋谷区道玄坂1-2-3 渋谷ビル10F",
+      url: "https://xyz-corp.com",
+    },
+
+    social: {
+      twitter: "https://twitter.com/hanako_sato",
+      instagram: "https://instagram.com/hanako.sato",
+      line: "https://line.me/ti/p/hanako-sato",
+      note: "https://note.com/hanako_sato",
+      facebook: "https://facebook.com/hanako.sato",
+      linkedin: "https://linkedin.com/in/hanako-sato",
+      github: "https://github.com/hanako-sato",
+    },
+
+    contentUrls: [
+      "https://xyz-corp.com/blog/product-strategy-2024",
+      "https://note.com/hanako_sato/n/startup-mindset",
+      "https://techcrunch.com/interview/hanako-sato",
+    ],
   },
   {
     id: 3,

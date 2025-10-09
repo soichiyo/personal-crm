@@ -102,3 +102,6 @@ The application implements a dual-view interface:
 - **Technical**: Connector success rate 90%+
 - **Retention**: Usage intent 70%+
 - **Business**: 3+ PoC companies
+- additional tasks
+
+- Loading後のフラッシュモーダルが、iPhoneの画面を飛び越えています。また遷移先はHomeで（今はContacts二遷移しています）

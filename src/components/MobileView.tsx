@@ -1,19 +1,12 @@
 import { useState } from "react";
-import {
-  User,
-  Users,
-  Plus,
-  Home,
-  Settings,
-  Link2,
-  Check,
-} from "lucide-react";
+import { Users, Plus, Home, Settings, Link2, Check } from "lucide-react";
 import { Contact } from "../types/Contact";
 import { Notification } from "../types/Notification";
 import { Reminder } from "../types/Reminder";
 import { Activity } from "../types/Activity";
 import { AddModal } from "./AddModal";
 import { ContactEditModal } from "./ContactEditModal";
+import { ContactDetailPage } from "./ContactDetailPage";
 import { KeepInTouchModal } from "./KeepInTouchModal";
 import { FollowUpModal } from "./FollowUpModal";
 import { NotificationIcon } from "./NotificationIcon";
@@ -21,6 +14,7 @@ import { NotificationModal } from "./NotificationModal";
 import { ReminderSection } from "./Home/ReminderSection";
 import { NewContactsSection } from "./Home/NewContactsSection";
 import { ActivitySection } from "./Home/ActivitySection";
+import { Flash, FlashType } from "./common/Flash";
 
 interface MobileViewProps {
   contacts: Contact[];
@@ -33,25 +27,34 @@ export const MobileView = ({
   contacts: initialContacts,
   notifications: initialNotifications,
   reminders: initialReminders,
-  activities: initialActivities
+  activities: initialActivities,
 }: MobileViewProps) => {
   const [contacts, setContacts] = useState(initialContacts);
-  const [notifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState(initialNotifications);
   const [reminders, setReminders] = useState(initialReminders);
   const [activities, setActivities] = useState(initialActivities);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showContactDetail, setShowContactDetail] = useState(false);
   const [showKeepInTouchModal, setShowKeepInTouchModal] = useState(false);
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [currentTab, setCurrentTab] = useState("home");
+  const [editOrigin, setEditOrigin] = useState<"detail" | "direct" | null>(
+    null
+  ); // 編集画面の開始元を追跡
+
+  // Flash state
+  const [flashVisible, setFlashVisible] = useState(false);
+  const [flashMessage, setFlashMessage] = useState("");
+  const [flashType, setFlashType] = useState<FlashType>("info");
 
   const addActivity = (description: string, contactId?: string) => {
     const newActivity: Activity = {
       id: `activity-${Date.now()}`,
-      contactId: contactId || '',
-      type: 'note-added',
+      contactId: contactId || "",
+      type: "note-added",
       description,
       timestamp: new Date(),
     };
@@ -59,16 +62,18 @@ export const MobileView = ({
   };
 
   const handleReminderComplete = (id: string) => {
-    const reminder = reminders.find(r => r.id === id);
+    const reminder = reminders.find((r) => r.id === id);
     if (reminder) {
-      const contact = contacts.find(c => c.id.toString() === reminder.contactId);
+      const contact = contacts.find(
+        (c) => c.id.toString() === reminder.contactId
+      );
       if (contact) {
         addActivity(`${contact.name}さんのリマインダーを完了しました`);
       }
     }
-    setReminders(reminders.map(r =>
-      r.id === id ? { ...r, completed: true } : r
-    ));
+    setReminders(
+      reminders.map((r) => (r.id === id ? { ...r, completed: true } : r))
+    );
   };
 
   const handleReminderPostpone = (_id: string) => {
@@ -76,24 +81,28 @@ export const MobileView = ({
   };
 
   const handleArchive = (id: number) => {
-    const contact = contacts.find(c => c.id === id);
+    const contact = contacts.find((c) => c.id === id);
     if (contact) {
       addActivity(`${contact.name}さんをアーカイブしました`);
     }
-    setContacts(contacts.map(c =>
-      c.id === id ? { ...c, status: 'archived' as const } : c
-    ));
+    setContacts(
+      contacts.map((c) =>
+        c.id === id ? { ...c, status: "archived" as const } : c
+      )
+    );
   };
 
   const handleKeepInTouch = (id: number) => {
-    const contact = contacts.find(c => c.id === id);
+    const contact = contacts.find((c) => c.id === id);
     if (contact) {
       setSelectedContact(contact);
       setShowKeepInTouchModal(true);
     }
   };
 
-  const handleKeepInTouchConfirm = (interval: '1week' | '3weeks' | '1month' | 'ai') => {
+  const handleKeepInTouchConfirm = (
+    interval: "1week" | "3weeks" | "1month" | "ai"
+  ) => {
     if (selectedContact) {
       // 新しいReminderを作成
       const dueDate = calculateDueDate(interval);
@@ -101,35 +110,39 @@ export const MobileView = ({
         id: `reminder-${Date.now()}`,
         contactId: selectedContact.id.toString(),
         dueDate,
-        type: 'keep-in-touch' as const,
+        type: "keep-in-touch" as const,
         interval,
         completed: false,
       };
 
       setReminders([...reminders, newReminder]);
-      setContacts(contacts.map(c =>
-        c.id === selectedContact.id ? { ...c, status: 'active' as const } : c
-      ));
+      setContacts(
+        contacts.map((c) =>
+          c.id === selectedContact.id ? { ...c, status: "active" as const } : c
+        )
+      );
 
       // Activity追加
       addActivity(`${selectedContact.name}さんのリマインダーを設定しました`);
 
       setShowKeepInTouchModal(false);
       setSelectedContact(null);
-      alert(`設定しました！✨\n${selectedContact.name}さんのリマインダーを作成しました`);
+      alert(
+        `設定しました！✨\n${selectedContact.name}さんのリマインダーを作成しました`
+      );
     }
   };
 
   const calculateDueDate = (interval: string): Date => {
     const now = new Date();
     switch (interval) {
-      case '1week':
+      case "1week":
         return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-      case '3weeks':
+      case "3weeks":
         return new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000);
-      case '1month':
+      case "1month":
         return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-      case 'ai':
+      case "ai":
         // AIおまかせは2週間後を提案（モック）
         return new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
       default:
@@ -142,10 +155,18 @@ export const MobileView = ({
   };
 
   const handleCardClick = (contactId: number) => {
-    const contact = contacts.find(c => c.id === contactId);
+    const contact = contacts.find((c) => c.id === contactId);
     if (contact) {
-      setSelectedContact(contact);
-      setShowEditModal(true);
+      // 未開封タグを削除
+      const updatedContact = {
+        ...contact,
+        tags: contact.tags?.filter((tag) => tag !== "未開封") || [],
+      };
+      setSelectedContact(updatedContact);
+      setContacts(
+        contacts.map((c) => (c.id === contactId ? updatedContact : c))
+      );
+      setShowContactDetail(true);
     }
   };
 
@@ -154,14 +175,65 @@ export const MobileView = ({
       addActivity(`${selectedContact.name}さんの情報を更新しました`);
     }
     setShowEditModal(false);
-    setSelectedContact(null);
+
+    // 編集画面の開始元がContactDetailPageの場合は、そこに戻る
+    if (editOrigin === "detail") {
+      setShowContactDetail(true);
+      setEditOrigin(null);
+    } else {
+      setSelectedContact(null);
+      setEditOrigin(null);
+    }
   };
 
   const handleSaveContact = (updatedContact: Contact) => {
     // 自動保存時はcontactsを更新するだけ（Activity追加なし、モーダルは閉じない）
-    setContacts(contacts.map(c =>
-      c.id === updatedContact.id ? updatedContact : c
-    ));
+    setContacts(
+      contacts.map((c) => (c.id === updatedContact.id ? updatedContact : c))
+    );
+  };
+
+  const handleDeepSearch = () => {
+    if (!selectedContact) return;
+
+    // 1. AI検索ステータスを'processing'に更新
+    const updatedContact = { ...selectedContact, aiSearchStatus: 'processing' as const };
+    setContacts(contacts.map(c => c.id === selectedContact.id ? updatedContact : c));
+    setSelectedContact(updatedContact);
+
+    // 2. 通知に新規AI検索通知を追加
+    const newNotification: Notification = {
+      id: `ai-search-${Date.now()}`,
+      type: 'ai-search',
+      contactId: selectedContact.id.toString(),
+      title: `${selectedContact.name}さんのAI検索`,
+      message: '情報の検索中です...',
+      timestamp: new Date(),
+      read: false,
+    };
+    setNotifications([newNotification, ...notifications]);
+
+    // 3. フラッシュメッセージ表示
+    setFlashMessage('人物検索を開始しました。完了したら通知します。');
+    setFlashType('info');
+    setFlashVisible(true);
+
+    // 4. 編集モーダルを閉じて詳細画面に戻る
+    setShowEditModal(false);
+    setShowContactDetail(true);
+
+    // 5. モック: 3秒後にステータスを'completed'に更新
+    setTimeout(() => {
+      const completedContact = { ...updatedContact, aiSearchStatus: 'completed' as const };
+      setContacts(contacts.map(c => c.id === selectedContact.id ? completedContact : c));
+
+      // 通知を'completed'状態に更新
+      setNotifications(notifications.map(n =>
+        n.id === newNotification.id
+          ? { ...n, message: 'SNSプロフィール情報の検索が完了しました。', read: false }
+          : n
+      ));
+    }, 3000);
   };
 
   const renderTabContent = () => {
@@ -201,9 +273,20 @@ export const MobileView = ({
               <div
                 key={contact.id}
                 className="p-4 hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleCardClick(contact.id)}
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-3xl">{contact.avatar}</span>
+                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl overflow-hidden shrink-0">
+                    {contact.photoUrl ? (
+                      <img
+                        src={contact.photoUrl}
+                        alt={contact.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span>{contact.avatar}</span>
+                    )}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 truncate">
                       {contact.name}
@@ -227,7 +310,9 @@ export const MobileView = ({
     } else if (currentTab === "settings") {
       return (
         <div className="flex-1 overflow-y-auto p-4">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">Settings</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">
+            Settings
+          </h2>
 
           <div className="bg-white rounded-2xl shadow-sm mb-4">
             <h3 className="text-sm font-semibold text-gray-700 p-4 border-b">
@@ -283,7 +368,9 @@ export const MobileView = ({
             </h3>
             <div className="p-4 border-b">
               <div className="flex items-center justify-between">
-                <p className="font-medium text-gray-800">フォローアップリマインド</p>
+                <p className="font-medium text-gray-800">
+                  フォローアップリマインド
+                </p>
                 <div className="w-12 h-6 bg-gray-900 rounded-full relative cursor-pointer">
                   <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                 </div>
@@ -339,17 +426,12 @@ export const MobileView = ({
           className="p-2 rounded-full transition-colors hover:bg-gray-100"
           aria-label="ホームへ戻る"
         >
-          <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center">
-            <Home className="w-5 h-5 text-white" />
-          </div>
+          <Home className="w-6 h-6 text-gray-600" />
         </button>
-        <div className="flex gap-3">
-          <NotificationIcon
-            unreadCount={notifications.filter(n => !n.read).length}
-            onClick={() => setShowNotificationModal(true)}
-          />
-          <User className="w-6 h-6 text-gray-600" />
-        </div>
+        <NotificationIcon
+          unreadCount={notifications.filter((n) => !n.read).length}
+          onClick={() => setShowNotificationModal(true)}
+        />
       </div>
 
       {renderTabContent()}
@@ -394,14 +476,31 @@ export const MobileView = ({
         <Plus className="w-7 h-7 text-white" />
       </button>
 
-      {showAddModal && <AddModal onClose={() => setShowAddModal(false)} />}
+      {showAddModal && (
+        <AddModal
+          onClose={() => setShowAddModal(false)}
+          onAddContacts={(newContacts) => {
+            // 複数コンタクトを追加
+            setContacts([...newContacts, ...contacts]);
+            // アクティビティに記録
+            newContacts.forEach((contact) => {
+              addActivity(
+                `${contact.name}さんを追加しました`,
+                contact.id.toString()
+              );
+            });
+            // Homeタブに遷移
+            setCurrentTab("home");
+          }}
+        />
+      )}
 
       {showEditModal && selectedContact && (
         <ContactEditModal
           contact={selectedContact}
           onClose={handleCloseEdit}
           onSave={handleSaveContact}
-          onFollowUpClick={() => setShowFollowUpModal(true)}
+          onDeepSearchClick={handleDeepSearch}
         />
       )}
 
@@ -421,10 +520,35 @@ export const MobileView = ({
         <FollowUpModal
           isOpen={showFollowUpModal}
           contact={selectedContact}
-          onClose={() => setShowFollowUpModal(false)}
+          onClose={() => {
+            setShowFollowUpModal(false);
+          }}
           onMarkAsSent={() => {
-            addActivity(`${selectedContact.name}さんにフォローアップメッセージを送信しました`, selectedContact.id.toString());
-            alert('送信済にしました ✨');
+            addActivity(
+              `${selectedContact.name}さんにフォローアップメッセージを送信しました`,
+              selectedContact.id.toString()
+            );
+            setShowFollowUpModal(false);
+            alert("送信済にしました ✨");
+          }}
+        />
+      )}
+
+      {showContactDetail && selectedContact && (
+        <ContactDetailPage
+          contact={selectedContact}
+          onClose={() => {
+            setShowContactDetail(false);
+            setSelectedContact(null);
+          }}
+          onEdit={(contact) => {
+            setShowContactDetail(false);
+            setSelectedContact(contact);
+            setEditOrigin("detail"); // 編集元をContactDetailPageとして記録
+            setShowEditModal(true);
+          }}
+          onFollowUpClick={() => {
+            setShowFollowUpModal(true);
           }}
         />
       )}
@@ -434,6 +558,15 @@ export const MobileView = ({
         onClose={() => setShowNotificationModal(false)}
         notifications={notifications}
         contacts={contacts}
+      />
+
+      {/* Flash Message */}
+      <Flash
+        type={flashType}
+        message={flashMessage}
+        isVisible={flashVisible}
+        onClose={() => setFlashVisible(false)}
+        duration={3000}
       />
     </div>
   );

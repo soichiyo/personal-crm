@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { Camera } from 'lucide-react';
 import { Contact } from '../../types/Contact';
 
 interface BasicInfoProps {
@@ -7,14 +8,72 @@ interface BasicInfoProps {
 }
 
 export const BasicInfo: React.FC<BasicInfoProps> = ({ contact, onChange }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // ファイルをData URLに変換
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        onChange('photoUrl', result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="space-y-4">
-      {/* プロフィール絵文字 */}
+      {/* プロフィール写真/絵文字 */}
       <div className="flex justify-center mb-6">
-        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center text-5xl">
-          {contact.profileEmoji || contact.avatar || '👤'}
+        <div className="relative">
+          <div
+            className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center text-5xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={handlePhotoClick}
+          >
+            {contact.photoUrl ? (
+              <img
+                src={contact.photoUrl}
+                alt={contact.name || 'Profile'}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span>{contact.profileEmoji || contact.avatar || '👤'}</span>
+            )}
+          </div>
+          <button
+            onClick={handlePhotoClick}
+            className="absolute bottom-0 right-0 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors"
+            type="button"
+          >
+            <Camera className="w-4 h-4 text-white" />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="hidden"
+          />
         </div>
       </div>
+
+      {contact.photoUrl && (
+        <div className="flex justify-center">
+          <button
+            onClick={() => onChange('photoUrl', '')}
+            className="text-sm text-red-600 hover:text-red-700"
+            type="button"
+          >
+            写真を削除
+          </button>
+        </div>
+      )}
 
       {/* 名前 */}
       <div>
@@ -26,6 +85,20 @@ export const BasicInfo: React.FC<BasicInfoProps> = ({ contact, onChange }) => {
           value={contact.name || ''}
           onChange={(e) => onChange('name', e.target.value)}
           placeholder="山田 太郎"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
+      </div>
+
+      {/* 読み仮名 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          読み仮名
+        </label>
+        <input
+          type="text"
+          value={contact.nameReading || ''}
+          onChange={(e) => onChange('nameReading', e.target.value)}
+          placeholder="やまだ たろう"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
         />
       </div>
@@ -58,22 +131,32 @@ export const BasicInfo: React.FC<BasicInfoProps> = ({ contact, onChange }) => {
         />
       </div>
 
+      {/* キャッチフレーズ */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          キャッチフレーズ
+        </label>
+        <input
+          type="text"
+          value={contact.tagline || ''}
+          onChange={(e) => onChange('tagline', e.target.value)}
+          placeholder="例: デジタルマーケティングの専門家"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
+      </div>
+
       {/* メール（オプション） */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           メールアドレス
         </label>
-        {contact.name ? (
-          <input
-            type="email"
-            placeholder="example@company.com"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-          />
-        ) : (
-          <button className="text-sm text-gray-500 hover:text-gray-900">
-            [追加する]
-          </button>
-        )}
+        <input
+          type="email"
+          value={contact.email || ''}
+          onChange={(e) => onChange('email', e.target.value)}
+          placeholder="example@company.com"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
       </div>
 
       {/* 電話（オプション） */}
@@ -81,17 +164,13 @@ export const BasicInfo: React.FC<BasicInfoProps> = ({ contact, onChange }) => {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           電話番号
         </label>
-        {contact.name ? (
-          <input
-            type="tel"
-            placeholder="03-1234-5678"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-          />
-        ) : (
-          <button className="text-sm text-gray-500 hover:text-gray-900">
-            [追加する]
-          </button>
-        )}
+        <input
+          type="tel"
+          value={contact.phone || ''}
+          onChange={(e) => onChange('phone', e.target.value)}
+          placeholder="03-1234-5678"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
       </div>
     </div>
   );

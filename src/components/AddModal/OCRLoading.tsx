@@ -3,10 +3,12 @@ import { Loading } from '../common/Loading';
 
 interface OCRLoadingProps {
   onComplete: () => void;
+  cardCount?: number; // 処理する名刺の枚数
 }
 
-export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete }) => {
+export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete, cardCount = 1 }) => {
   const [progress, setProgress] = useState(0);
+  const [currentCard, setCurrentCard] = useState(1);
 
   useEffect(() => {
     // プログレスバーのアニメーション
@@ -20,6 +22,19 @@ export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete }) => {
       });
     }, 50);
 
+    // 複数枚の場合、カード番号を更新
+    if (cardCount > 1) {
+      const cardInterval = setInterval(() => {
+        setCurrentCard((prev) => {
+          if (prev >= cardCount) {
+            clearInterval(cardInterval);
+            return cardCount;
+          }
+          return prev + 1;
+        });
+      }, 2500 / cardCount); // 均等に分割
+    }
+
     // 2-3秒後に完了
     const timer = setTimeout(() => {
       onComplete();
@@ -29,7 +44,7 @@ export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete }) => {
       clearInterval(progressInterval);
       clearTimeout(timer);
     };
-  }, [onComplete]);
+  }, [onComplete, cardCount]);
 
   return (
     <div className="absolute inset-0 z-50 bg-white flex flex-col items-center justify-center">
@@ -40,7 +55,19 @@ export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete }) => {
         </span>
       </div>
 
-      <Loading size="lg" message="名刺を読み取り中..." />
+      <Loading
+        size="lg"
+        message={cardCount > 1 ? `${cardCount}枚の名刺を読み取り中...` : "名刺を読み取り中..."}
+      />
+
+      {/* カウンター表示（複数枚の場合） */}
+      {cardCount > 1 && (
+        <div className="mt-4">
+          <p className="text-center text-lg font-semibold text-gray-700">
+            {currentCard} / {cardCount}
+          </p>
+        </div>
+      )}
 
       {/* プログレスバー */}
       <div className="w-64 mt-8">

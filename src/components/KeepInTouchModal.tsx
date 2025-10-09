@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Contact } from '../types/Contact';
-import { Modal } from './common/Modal';
+import React, { useState } from "react";
+import { Contact } from "../types/Contact";
+import { Modal } from "./common/Modal";
 
 interface KeepInTouchModalProps {
   isOpen: boolean;
   contact: Contact;
   onClose: () => void;
-  onConfirm: (interval: '1week' | '3weeks' | '1month' | 'ai') => void;
+  onConfirm: (interval: "1week" | "3weeks" | "1month" | "ai") => void;
 }
 
 export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
@@ -15,13 +15,18 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
   onClose,
   onConfirm,
 }) => {
-  const [selectedInterval, setSelectedInterval] = useState<'1week' | '3weeks' | '1month' | 'ai' | null>(null);
+  const [selectedInterval, setSelectedInterval] = useState<
+    "1week" | "3weeks" | "1month" | "ai" | null
+  >(null);
 
-  const intervals: Array<{ value: '1week' | '3weeks' | '1month' | 'ai'; label: string }> = [
-    { value: '1week', label: '1週間後' },
-    { value: '3weeks', label: '3週間後' },
-    { value: '1month', label: '1ヶ月後' },
-    { value: 'ai', label: '✨ AIにおまかせ' },
+  const intervals: Array<{
+    value: "1week" | "3weeks" | "1month" | "ai";
+    label: string;
+  }> = [
+    { value: "1week", label: "1週間後" },
+    { value: "3weeks", label: "3週間後" },
+    { value: "1month", label: "1ヶ月後" },
+    { value: "ai", label: "✨ AIにおまかせ" },
   ];
 
   const handleConfirm = () => {
@@ -52,14 +57,14 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
                 onClick={() => setSelectedInterval(interval.value)}
                 className={`w-full p-4 rounded-xl text-left transition-all ${
                   selectedInterval === interval.value
-                    ? 'bg-blue-50 border-2 border-blue-600'
-                    : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+                    ? "bg-blue-50 border-2 border-blue-600"
+                    : "bg-gray-50 border-2 border-transparent hover:bg-gray-100"
                 }`}
               >
                 <span className="text-base font-medium text-gray-900">
                   {interval.label}
                 </span>
-                {interval.value === 'ai' && (
+                {interval.value === "ai" && (
                   <p className="text-xs text-gray-600 mt-1">
                     ビジネス関係の初回フォローアップに最適です
                   </p>
@@ -82,8 +87,8 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
             disabled={!selectedInterval}
             className={`flex-1 px-4 py-3 font-medium rounded-xl transition-colors ${
               selectedInterval
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
             設定する
