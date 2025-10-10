@@ -42,8 +42,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
       setShowCopyToast(true);
       setTimeout(() => {
         setShowCopyToast(false);
-        onMarkAsSent(draft); // コピー時も完了として扱う
-        onClose();
+        // モーダルは開いたまま、何度でもコピー・編集可能
       }, 1000);
     } catch (err) {
       console.error("Failed to copy:", err);
