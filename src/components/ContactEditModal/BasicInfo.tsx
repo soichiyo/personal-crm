@@ -172,6 +172,35 @@ export const BasicInfo: React.FC<BasicInfoProps> = ({ contact, onChange }) => {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
         />
       </div>
+
+      {/* 誕生日 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          誕生日 🎂
+        </label>
+        <input
+          type="date"
+          value={
+            contact.birthday
+              ? new Date(contact.birthday).toISOString().split('T')[0]
+              : ''
+          }
+          onChange={(e) => {
+            const dateValue = e.target.value ? new Date(e.target.value) : undefined;
+            onChange('birthday', dateValue as any);
+          }}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
+        {contact.birthday && (
+          <p className="text-xs text-gray-500 mt-1">
+            {new Date(contact.birthday).toLocaleDateString('ja-JP', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
+        )}
+      </div>
     </div>
   );
 };

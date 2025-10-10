@@ -105,3 +105,4 @@ The application implements a dual-view interface:
 - additional tasks
 
 - Loading後のフラッシュモーダルが、iPhoneの画面を飛び越えています。また遷移先はHomeで（今はContacts二遷移しています）
+- 1001-01.md のファイルを実装してみて

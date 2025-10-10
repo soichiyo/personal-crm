@@ -16,6 +16,7 @@ export const sampleContacts: Contact[] = [
     profileEmoji: "👨‍💼",
     status: "active",
     aiSearchStatus: "completed",
+    birthday: new Date("1985-10-10"), // 今日が誕生日
   },
   {
     id: 2,
@@ -80,6 +81,7 @@ export const sampleContacts: Contact[] = [
     profileEmoji: "👨‍💻",
     status: "new",
     aiSearchStatus: "processing",
+    birthday: new Date("1988-11-15"), // 11月15日生まれ
   },
   {
     id: 4,

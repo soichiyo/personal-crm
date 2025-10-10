@@ -1,20 +1,20 @@
 import React from 'react';
 import { Contact } from '../../types/Contact';
-import { Calendar, Tag } from 'lucide-react';
+import { Calendar, Tag, StickyNote, Heart } from 'lucide-react';
 
 interface NewContactsSectionProps {
   contacts: Contact[];
   onArchive?: (id: number) => void;
-  onKeepInTouch?: (id: number) => void;
-  onLater?: (id: number) => void;
+  onMemo?: (id: number) => void;
+  onThankYou?: (id: number) => void;
   onCardClick?: (id: number) => void;
 }
 
 export const NewContactsSection: React.FC<NewContactsSectionProps> = ({
   contacts,
   onArchive,
-  onKeepInTouch,
-  onLater,
+  onMemo,
+  onThankYou,
   onCardClick,
 }) => {
   const newContacts = contacts.filter((c) => c.status === 'new');
@@ -117,16 +117,18 @@ export const NewContactsSection: React.FC<NewContactsSectionProps> = ({
             {/* アクションボタン */}
             <div className="flex gap-2">
               <button
-                onClick={() => onLater && onLater(contact.id)}
-                className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                onClick={() => onMemo && onMemo(contact.id)}
+                className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-1"
               >
-                あとで
+                <StickyNote className="w-3.5 h-3.5" />
+                メモ
               </button>
               <button
-                onClick={() => onKeepInTouch && onKeepInTouch(contact.id)}
-                className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                onClick={() => onThankYou && onThankYou(contact.id)}
+                className="flex-1 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-1"
               >
-                連絡する
+                <Heart className="w-3.5 h-3.5" />
+                お礼の連絡
               </button>
               <button
                 onClick={() => onArchive && onArchive(contact.id)}

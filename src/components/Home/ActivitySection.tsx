@@ -1,13 +1,16 @@
 import React from 'react';
-import { Activity } from '../../types/Activity';
+import { Activity, ActivityType } from '../../types/Activity';
 import { CheckCircle } from 'lucide-react';
+import { TimelineSettings } from '../../types/TimelineSettings';
 
 interface ActivitySectionProps {
   activities: Activity[];
+  timelineSettings?: TimelineSettings;
 }
 
 export const ActivitySection: React.FC<ActivitySectionProps> = ({
   activities,
+  timelineSettings,
 }) => {
   const getRelativeTime = (timestamp: Date) => {
     const now = new Date();
@@ -25,7 +28,25 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
     });
   };
 
-  if (activities.length === 0) {
+  // タイムラインイベント（人生の出来事）を設定に基づいてフィルタリング
+  const timelineEventTypes: ActivityType[] = ['birthday', 'promotion', 'marriage', 'childbirth', 'job-change', 'new-product'];
+
+  const filteredActivities = activities.filter((activity) => {
+    // タイムラインイベントでない場合は常に表示
+    if (!timelineEventTypes.includes(activity.type)) {
+      return true;
+    }
+
+    // タイムラインイベントの場合は設定をチェック
+    if (timelineSettings) {
+      return timelineSettings.enabledEvents.includes(activity.type as any);
+    }
+
+    // 設定がない場合はすべて表示
+    return true;
+  });
+
+  if (filteredActivities.length === 0) {
     return (
       <section className="mb-6">
         <h2 className="text-base font-semibold text-gray-900 mb-3">
@@ -38,7 +59,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
     );
   }
 
-  const recentActivities = activities.slice(0, 5);
+  const recentActivities = filteredActivities.slice(0, 5);
 
   return (
     <section className="mb-6">

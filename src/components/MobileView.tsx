@@ -4,6 +4,7 @@ import { Contact } from "../types/Contact";
 import { Notification } from "../types/Notification";
 import { Reminder } from "../types/Reminder";
 import { Activity } from "../types/Activity";
+import { TimelineSettings, defaultTimelineSettings } from "../types/TimelineSettings";
 import { AddModal } from "./AddModal";
 import { ContactEditModal } from "./ContactEditModal";
 import { ContactDetailPage } from "./ContactDetailPage";
@@ -14,7 +15,9 @@ import { NotificationModal } from "./NotificationModal";
 import { ReminderSection } from "./Home/ReminderSection";
 import { NewContactsSection } from "./Home/NewContactsSection";
 import { ActivitySection } from "./Home/ActivitySection";
+import { TodayEventsSection } from "./Home/TodayEventsSection";
 import { Flash, FlashType } from "./common/Flash";
+import { TimelineSettingsSection } from "./Settings/TimelineSettingsSection";
 
 interface MobileViewProps {
   contacts: Contact[];
@@ -44,11 +47,15 @@ export const MobileView = ({
   const [editOrigin, setEditOrigin] = useState<"detail" | "direct" | null>(
     null
   ); // 編集画面の開始元を追跡
+  const [autoOpenNoteInput, setAutoOpenNoteInput] = useState(false); // メモ入力を自動で開く
 
   // Flash state
   const [flashVisible, setFlashVisible] = useState(false);
   const [flashMessage, setFlashMessage] = useState("");
   const [flashType, setFlashType] = useState<FlashType>("info");
+
+  // Timeline settings state
+  const [timelineSettings, setTimelineSettings] = useState<TimelineSettings>(defaultTimelineSettings);
 
   const addActivity = (description: string, contactId?: string) => {
     const newActivity: Activity = {
@@ -240,20 +247,41 @@ export const MobileView = ({
     if (currentTab === "home") {
       return (
         <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-          <ReminderSection
+          <TodayEventsSection
+            contacts={contacts}
+            onCardClick={handleCardClick}
+          />
+          {/* V1: リマインダー機能は非表示（V2以降で復活予定） */}
+          {/* <ReminderSection
             reminders={reminders}
             contacts={contacts}
             onComplete={handleReminderComplete}
             onPostpone={handleReminderPostpone}
-          />
+          /> */}
           <NewContactsSection
             contacts={contacts}
             onArchive={handleArchive}
-            onKeepInTouch={handleKeepInTouch}
-            onLater={handleLater}
+            onMemo={(id) => {
+              const contact = contacts.find((c) => c.id === id);
+              if (contact) {
+                setSelectedContact(contact);
+                setAutoOpenNoteInput(true);
+                setShowContactDetail(true);
+              }
+            }}
+            onThankYou={(id) => {
+              const contact = contacts.find((c) => c.id === id);
+              if (contact) {
+                setSelectedContact(contact);
+                setShowFollowUpModal(true);
+              }
+            }}
             onCardClick={handleCardClick}
           />
-          <ActivitySection activities={activities} />
+          <ActivitySection
+            activities={activities}
+            timelineSettings={timelineSettings}
+          />
         </div>
       );
     } else if (currentTab === "contacts") {
@@ -366,16 +394,7 @@ export const MobileView = ({
             <h3 className="text-sm font-semibold text-gray-700 p-4 border-b">
               通知設定
             </h3>
-            <div className="p-4 border-b">
-              <div className="flex items-center justify-between">
-                <p className="font-medium text-gray-800">
-                  フォローアップリマインド
-                </p>
-                <div className="w-12 h-6 bg-gray-900 rounded-full relative cursor-pointer">
-                  <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-                </div>
-              </div>
-            </div>
+            {/* V1: フォローアップリマインド設定は非表示 */}
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <p className="font-medium text-gray-800">誕生日通知</p>
@@ -385,6 +404,11 @@ export const MobileView = ({
               </div>
             </div>
           </div>
+
+          <TimelineSettingsSection
+            settings={timelineSettings}
+            onSettingsChange={setTimelineSettings}
+          />
 
           <div className="bg-white rounded-2xl shadow-sm">
             <button className="w-full p-4 text-left border-b">
@@ -540,6 +564,7 @@ export const MobileView = ({
           onClose={() => {
             setShowContactDetail(false);
             setSelectedContact(null);
+            setAutoOpenNoteInput(false);
           }}
           onEdit={(contact) => {
             setShowContactDetail(false);
@@ -550,6 +575,7 @@ export const MobileView = ({
           onFollowUpClick={() => {
             setShowFollowUpModal(true);
           }}
+          autoOpenNoteInput={autoOpenNoteInput}
         />
       )}
 

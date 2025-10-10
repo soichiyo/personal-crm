@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ArrowLeft, Edit3, Mail, Phone, MapPin, Globe, Plus, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Edit3, Mail, Phone, MapPin, Globe, Plus, Sparkles, Cake } from 'lucide-react';
 import { Contact } from '../types/Contact';
 
 interface ContactDetailPageProps {
@@ -7,12 +7,13 @@ interface ContactDetailPageProps {
   onClose: () => void;
   onEdit: (contact: Contact) => void;
   onFollowUpClick?: () => void;
+  autoOpenNoteInput?: boolean;
 }
 
 interface TimelineEntry {
   id: string;
   date: string;
-  type: 'note' | 'linkedin' | 'contact_created';
+  type: 'note' | 'linkedin' | 'contact_created' | 'birthday';
   content: string;
 }
 
@@ -23,8 +24,8 @@ interface ActivityEntry {
   content: string;
 }
 
-export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick }: ContactDetailPageProps) => {
-  const [showNoteInput, setShowNoteInput] = useState(false);
+export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, autoOpenNoteInput = false }: ContactDetailPageProps) => {
+  const [showNoteInput, setShowNoteInput] = useState(autoOpenNoteInput);
   const [noteText, setNoteText] = useState('');
 
   // Mock timeline data
@@ -43,8 +44,30 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick }:
     },
   ]);
 
-  // Mock activity data
-  const activities: ActivityEntry[] = [
+  // 誕生日をtimelineに自動追加
+  useEffect(() => {
+    if (contact.birthday) {
+      const birthday = new Date(contact.birthday);
+      const birthdayEntry: TimelineEntry = {
+        id: 'birthday',
+        date: `${String(birthday.getMonth() + 1).padStart(2, '0')}.${String(birthday.getDate()).padStart(2, '0')}`,
+        type: 'birthday',
+        content: `🎂 ${birthday.getFullYear()}年${birthday.getMonth() + 1}月${birthday.getDate()}日生まれ`,
+      };
+
+      // 既存のtimelineに誕生日エントリーがない場合のみ追加
+      setTimeline(prev => {
+        const hasBirthday = prev.some(entry => entry.type === 'birthday');
+        if (!hasBirthday) {
+          return [birthdayEntry, ...prev];
+        }
+        return prev;
+      });
+    }
+  }, [contact.birthday]);
+
+  // Mock activity data (V1: Reminder関連のアクティビティは非表示)
+  const allActivities: ActivityEntry[] = [
     {
       id: '1',
       date: '08.25',
@@ -58,6 +81,11 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick }:
       content: 'Contact作成',
     },
   ];
+
+  // Reminder関連のアクティビティをフィルタリング
+  const activities = allActivities.filter(
+    (activity) => activity.type !== 'reminder_completed'
+  );
 
   const handleAddNote = () => {
     if (!noteText.trim()) return;
@@ -290,11 +318,16 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick }:
           {/* Timeline Entries */}
           <div className="space-y-3">
             {timeline.map((entry) => (
-              <div key={entry.id} className="flex gap-3 text-sm">
+              <div key={entry.id} className={`flex gap-3 text-sm ${entry.type === 'birthday' ? 'bg-pink-50 -mx-2 px-2 py-2 rounded-lg' : ''}`}>
                 <span className="text-gray-500 font-medium min-w-[40px]">
                   {entry.date}
                 </span>
-                <p className="text-gray-700">{entry.content}</p>
+                {entry.type === 'birthday' && (
+                  <Cake className="w-4 h-4 text-pink-600 mt-0.5" />
+                )}
+                <p className={`${entry.type === 'birthday' ? 'text-pink-900 font-medium' : 'text-gray-700'}`}>
+                  {entry.content}
+                </p>
               </div>
             ))}
           </div>
