@@ -199,7 +199,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
 
         {/* メールクライアント選択サブモーダル */}
         {showEmailClientModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4 pt-10">
             <div className="bg-white rounded-2xl p-6 w-full max-w-sm animate-in fade-in zoom-in duration-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 メールクライアントを選択
@@ -236,7 +236,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
 
         {/* Messenger確認サブモーダル */}
         {showMessengerConfirmModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4 pt-10">
             <div className="bg-white rounded-2xl p-6 w-full max-w-sm animate-in fade-in zoom-in duration-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 メッセージをコピーしましたか？

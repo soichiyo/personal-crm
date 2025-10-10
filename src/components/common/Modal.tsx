@@ -43,7 +43,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center px-4">
+    <div className="fixed inset-0 z-[50] flex items-end sm:items-center justify-center px-4 pt-10">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 animate-in fade-in duration-200"
