@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Loading } from '../common/Loading';
+import React, { useEffect, useState } from "react";
+import { Loading } from "../common/Loading";
 
 interface OCRLoadingProps {
   onComplete: () => void;
   cardCount?: number; // 処理する名刺の枚数
 }
 
-export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete, cardCount = 1 }) => {
+export const OCRLoading: React.FC<OCRLoadingProps> = ({
+  onComplete,
+  cardCount = 1,
+}) => {
   const [progress, setProgress] = useState(0);
   const [currentCard, setCurrentCard] = useState(1);
 
@@ -49,15 +52,19 @@ export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete, cardCount = 
   return (
     <div className="absolute inset-0 z-50 bg-white flex flex-col items-center justify-center">
       {/* Screen Identifier */}
-      <div className="absolute top-0 left-0 right-0 bg-yellow-400 px-3 py-1 flex items-center justify-center shrink-0">
-        <span className="text-xs font-mono font-bold text-gray-900">
+      <div className="absolute top-0 left-0 right-0 bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center shrink-0 z-[9998]">
+        <span className="text-xs font-mono font-semibold text-purple-900">
           MOB-ADD-OCR
         </span>
       </div>
 
       <Loading
         size="lg"
-        message={cardCount > 1 ? `${cardCount}枚の名刺を読み取り中...` : "名刺を読み取り中..."}
+        message={
+          cardCount > 1
+            ? `${cardCount}枚の名刺を読み取り中...`
+            : "名刺を読み取り中..."
+        }
       />
 
       {/* カウンター表示（複数枚の場合） */}
@@ -82,9 +89,7 @@ export const OCRLoading: React.FC<OCRLoadingProps> = ({ onComplete, cardCount = 
 
       {/* ヒントテキスト */}
       <div className="mt-8 text-center max-w-xs">
-        <p className="text-sm text-gray-600">
-          名刺から情報を抽出しています...
-        </p>
+        <p className="text-sm text-gray-600">名刺から情報を抽出しています...</p>
         <p className="text-xs text-gray-500 mt-2">
           名前、会社名、役職などを自動で認識します
         </p>

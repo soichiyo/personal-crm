@@ -26,8 +26,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} title="通知" bodyClassName="p-0">
       <div className="flex flex-col h-full">
         {/* Screen Identifier */}
-        <div className="bg-yellow-400 px-3 py-1 flex items-center justify-center">
-          <span className="text-xs font-mono font-bold text-gray-900">
+        <div className="bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center relative z-[9998]">
+          <span className="text-xs font-mono font-semibold text-purple-900">
             MOB-NOTIF-{activeTab === "general" ? "GEN" : "AI"}
           </span>
         </div>

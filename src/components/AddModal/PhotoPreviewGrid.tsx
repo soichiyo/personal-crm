@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Upload } from 'lucide-react';
+import React from "react";
+import { X, Upload } from "lucide-react";
 
 interface CapturedPhoto {
   id: string;
@@ -22,15 +22,17 @@ export const PhotoPreviewGrid: React.FC<PhotoPreviewGridProps> = ({
   return (
     <div className="absolute inset-0 z-50 bg-white flex flex-col overflow-hidden">
       {/* Screen Identifier */}
-      <div className="bg-yellow-400 px-3 py-1 flex items-center justify-center shrink-0">
-        <span className="text-xs font-mono font-bold text-gray-900">
+      <div className="bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center shrink-0 relative z-[9998]">
+        <span className="text-xs font-mono font-semibold text-purple-900">
           MOB-ADD-PREVIEW
         </span>
       </div>
 
       {/* Header */}
       <div className="p-4 flex items-center justify-between bg-white border-b border-gray-200 shrink-0">
-        <h2 className="text-lg font-semibold text-gray-900">撮影した名刺を確認</h2>
+        <h2 className="text-lg font-semibold text-gray-900">
+          撮影した名刺を確認
+        </h2>
         <button
           onClick={onBack}
           className="text-sm text-gray-600 hover:text-gray-900 font-medium"

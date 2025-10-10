@@ -17,6 +17,7 @@ export const sampleContacts: Contact[] = [
     status: "active",
     aiSearchStatus: "completed",
     birthday: new Date("1985-10-10"), // 今日が誕生日
+    email: "taro.tanaka@abc-corp.co.jp",
   },
   {
     id: 2,
@@ -82,6 +83,7 @@ export const sampleContacts: Contact[] = [
     status: "new",
     aiSearchStatus: "processing",
     birthday: new Date("1988-11-15"), // 11月15日生まれ
+    email: "ichiro.suzuki@def-tech.com",
   },
   {
     id: 4,
@@ -98,6 +100,7 @@ export const sampleContacts: Contact[] = [
     profileEmoji: "👩‍💼",
     status: "new",
     aiSearchStatus: "failed",
+    email: "misaki.takahashi@ghi-ventures.jp",
   },
   {
     id: 5,
@@ -114,5 +117,6 @@ export const sampleContacts: Contact[] = [
     profileEmoji: "🎨",
     status: "active",
     aiSearchStatus: "pending",
+    email: "kenta.watanabe@jkl-design.studio",
   },
 ];

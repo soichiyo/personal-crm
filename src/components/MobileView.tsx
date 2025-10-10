@@ -445,8 +445,8 @@ export const MobileView = ({
   return (
     <div className="w-full h-full bg-white flex flex-col relative overflow-hidden">
       {/* Screen Identifier Bar */}
-      <div className="bg-yellow-50 border-b border-yellow-200 px-3 py-1 flex items-center justify-center shrink-0">
-        <span className="text-xs font-mono font-semibold text-yellow-900">
+      <div className="bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center shrink-0 relative z-[9998]">
+        <span className="text-xs font-mono font-semibold text-purple-900">
           {getScreenId()}
         </span>
       </div>

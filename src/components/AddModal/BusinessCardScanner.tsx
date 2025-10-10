@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Camera, Check } from 'lucide-react';
+import React, { useState } from "react";
+import { X, Camera, Check } from "lucide-react";
 
 export interface CapturedPhoto {
   id: string;
@@ -41,8 +41,8 @@ export const BusinessCardScanner: React.FC<BusinessCardScannerProps> = ({
   return (
     <div className="absolute inset-0 z-50 bg-black flex flex-col overflow-hidden">
       {/* Screen Identifier */}
-      <div className="bg-yellow-400 px-3 py-1 flex items-center justify-center shrink-0">
-        <span className="text-xs font-mono font-bold text-gray-900">
+      <div className="bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center shrink-0 relative z-[9998]">
+        <span className="text-xs font-mono font-semibold text-purple-900">
           MOB-ADD-SCAN
         </span>
       </div>
@@ -52,7 +52,9 @@ export const BusinessCardScanner: React.FC<BusinessCardScannerProps> = ({
         <div>
           <h2 className="text-white font-semibold">名刺をスキャン</h2>
           {capturedPhotos.length > 0 && (
-            <p className="text-green-400 text-sm mt-1">{capturedPhotos.length}枚撮影済み</p>
+            <p className="text-green-400 text-sm mt-1">
+              {capturedPhotos.length}枚撮影済み
+            </p>
           )}
         </div>
         <button
@@ -74,7 +76,9 @@ export const BusinessCardScanner: React.FC<BusinessCardScannerProps> = ({
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <Camera className="w-16 h-16 text-white/50 mx-auto mb-4" />
-              <p className="text-white/70 text-sm">名刺をこの枠に収めてください</p>
+              <p className="text-white/70 text-sm">
+                名刺をこの枠に収めてください
+              </p>
             </div>
           </div>
 

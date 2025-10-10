@@ -196,8 +196,8 @@ export const AddModal = ({ onClose, onAddContacts }: AddModalProps) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Screen Identifier */}
-          <div className="bg-yellow-400 px-3 py-1 flex items-center justify-center">
-            <span className="text-xs font-mono font-bold text-gray-900">
+          <div className="bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center relative z-[9998]">
+            <span className="text-xs font-mono font-semibold text-purple-900">
               MOB-ADD-MENU
             </span>
           </div>

@@ -46,6 +46,13 @@ export const KeepInTouchModal: React.FC<KeepInTouchModalProps> = ({
       bodyClassName="p-0 flex flex-col"
     >
       <div className="flex flex-col">
+        {/* Screen Identifier */}
+        <div className="bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center relative z-[9998]">
+          <span className="text-xs font-mono font-semibold text-purple-900">
+            MOB-KEEPINTOUCH
+          </span>
+        </div>
+
         {/* Content */}
         <div className="px-6 py-4">
           <p className="text-sm text-gray-700 mb-4">いつ連絡しますか？</p>

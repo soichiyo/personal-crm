@@ -11,6 +11,7 @@ export const PersonalCRMHome = () => {
 
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden">
+      {/* View Mode Switcher */}
       <div className="bg-gray-800 text-white p-3 flex justify-center gap-3 shrink-0">
         <button
           onClick={() => setViewMode("mobile")}
@@ -41,7 +42,9 @@ export const PersonalCRMHome = () => {
         </span>
         <span className="text-xs text-yellow-700">|</span>
         <span className="text-xs text-yellow-800">
-          {viewMode === "mobile" ? "モバイル（3タブ）" : "デスクトップ（サイドバー）"}
+          {viewMode === "mobile"
+            ? "モバイル（3タブ）"
+            : "デスクトップ（サイドバー）"}
         </span>
       </div>
 
@@ -63,7 +66,10 @@ export const PersonalCRMHome = () => {
               activities={sampleActivities}
             />
           ) : (
-            <DesktopView contacts={sampleContacts} notifications={sampleNotifications} />
+            <DesktopView
+              contacts={sampleContacts}
+              notifications={sampleNotifications}
+            />
           )}
         </div>
       </div>

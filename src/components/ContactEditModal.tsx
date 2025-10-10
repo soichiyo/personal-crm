@@ -74,9 +74,9 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
   return (
     <div className="absolute inset-0 z-50 bg-white flex flex-col">
       {/* Screen Identifier */}
-      <div className="bg-yellow-400 px-3 py-1 flex items-center justify-center shrink-0">
-        <span className="text-xs font-mono font-bold text-gray-900">
-          MOB-ADD-EDIT
+      <div className="bg-purple-50 border-b border-purple-200 px-3 py-1 flex items-center justify-center shrink-0 relative z-[9998]">
+        <span className="text-xs font-mono font-semibold text-purple-900">
+          MOB-CONTACT-EDIT
         </span>
       </div>
 
