@@ -18,6 +18,7 @@ export const sampleContacts: Contact[] = [
     aiSearchStatus: "completed",
     birthday: new Date("1985-10-10"), // 今日が誕生日
     email: "taro.tanaka@abc-corp.co.jp",
+    // Facebookなし → Emailのみのパターン
   },
   {
     id: 2,
@@ -83,7 +84,10 @@ export const sampleContacts: Contact[] = [
     status: "new",
     aiSearchStatus: "processing",
     birthday: new Date("1988-11-15"), // 11月15日生まれ
-    email: "ichiro.suzuki@def-tech.com",
+    // Emailなし → Messengerのみのパターン
+    social: {
+      facebook: "https://facebook.com/ichiro.suzuki",
+    },
   },
   {
     id: 4,

@@ -164,7 +164,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
           {contact.email && (
             <button
               onClick={handleSendEmail}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
             >
               <Mail className="w-4 h-4" />
               メールで送る
@@ -174,7 +174,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
           {contact.social?.facebook && (
             <button
               onClick={handleOpenMessenger}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
               Messengerで送る
