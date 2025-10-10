@@ -4,7 +4,10 @@ import { Contact } from "../types/Contact";
 import { Notification } from "../types/Notification";
 import { Reminder } from "../types/Reminder";
 import { Activity } from "../types/Activity";
-import { TimelineSettings, defaultTimelineSettings } from "../types/TimelineSettings";
+import {
+  TimelineSettings,
+  defaultTimelineSettings,
+} from "../types/TimelineSettings";
 import { AddModal } from "./AddModal";
 import { ContactEditModal } from "./ContactEditModal";
 import { ContactDetailPage } from "./ContactDetailPage";
@@ -12,7 +15,6 @@ import { KeepInTouchModal } from "./KeepInTouchModal";
 import { FollowUpModal } from "./FollowUpModal";
 import { NotificationIcon } from "./NotificationIcon";
 import { NotificationModal } from "./NotificationModal";
-import { ReminderSection } from "./Home/ReminderSection";
 import { NewContactsSection } from "./Home/NewContactsSection";
 import { ActivitySection } from "./Home/ActivitySection";
 import { TodayEventsSection } from "./Home/TodayEventsSection";
@@ -55,7 +57,9 @@ export const MobileView = ({
   const [flashType, setFlashType] = useState<FlashType>("info");
 
   // Timeline settings state
-  const [timelineSettings, setTimelineSettings] = useState<TimelineSettings>(defaultTimelineSettings);
+  const [timelineSettings, setTimelineSettings] = useState<TimelineSettings>(
+    defaultTimelineSettings
+  );
 
   const addActivity = (description: string, contactId?: string) => {
     const newActivity: Activity = {
@@ -68,25 +72,6 @@ export const MobileView = ({
     setActivities([newActivity, ...activities]);
   };
 
-  const handleReminderComplete = (id: string) => {
-    const reminder = reminders.find((r) => r.id === id);
-    if (reminder) {
-      const contact = contacts.find(
-        (c) => c.id.toString() === reminder.contactId
-      );
-      if (contact) {
-        addActivity(`${contact.name}さんのリマインダーを完了しました`);
-      }
-    }
-    setReminders(
-      reminders.map((r) => (r.id === id ? { ...r, completed: true } : r))
-    );
-  };
-
-  const handleReminderPostpone = (_id: string) => {
-    alert("リマインダー延期機能（張りぼて）");
-  };
-
   const handleArchive = (id: number) => {
     const contact = contacts.find((c) => c.id === id);
     if (contact) {
@@ -97,14 +82,6 @@ export const MobileView = ({
         c.id === id ? { ...c, status: "archived" as const } : c
       )
     );
-  };
-
-  const handleKeepInTouch = (id: number) => {
-    const contact = contacts.find((c) => c.id === id);
-    if (contact) {
-      setSelectedContact(contact);
-      setShowKeepInTouchModal(true);
-    }
   };
 
   const handleKeepInTouchConfirm = (
@@ -157,10 +134,6 @@ export const MobileView = ({
     }
   };
 
-  const handleLater = (_id: number) => {
-    alert("後で確認（張りぼて）");
-  };
-
   const handleCardClick = (contactId: number) => {
     const contact = contacts.find((c) => c.id === contactId);
     if (contact) {
@@ -204,25 +177,30 @@ export const MobileView = ({
     if (!selectedContact) return;
 
     // 1. AI検索ステータスを'processing'に更新
-    const updatedContact = { ...selectedContact, aiSearchStatus: 'processing' as const };
-    setContacts(contacts.map(c => c.id === selectedContact.id ? updatedContact : c));
+    const updatedContact = {
+      ...selectedContact,
+      aiSearchStatus: "processing" as const,
+    };
+    setContacts(
+      contacts.map((c) => (c.id === selectedContact.id ? updatedContact : c))
+    );
     setSelectedContact(updatedContact);
 
     // 2. 通知に新規AI検索通知を追加
     const newNotification: Notification = {
       id: `ai-search-${Date.now()}`,
-      type: 'ai-search',
+      type: "ai-search",
       contactId: selectedContact.id.toString(),
       title: `${selectedContact.name}さんのAI検索`,
-      message: '情報の検索中です...',
+      message: "情報の検索中です...",
       timestamp: new Date(),
       read: false,
     };
     setNotifications([newNotification, ...notifications]);
 
     // 3. フラッシュメッセージ表示
-    setFlashMessage('人物検索を開始しました。完了したら通知します。');
-    setFlashType('info');
+    setFlashMessage("人物検索を開始しました。完了したら通知します。");
+    setFlashType("info");
     setFlashVisible(true);
 
     // 4. 編集モーダルを閉じて詳細画面に戻る
@@ -231,15 +209,28 @@ export const MobileView = ({
 
     // 5. モック: 3秒後にステータスを'completed'に更新
     setTimeout(() => {
-      const completedContact = { ...updatedContact, aiSearchStatus: 'completed' as const };
-      setContacts(contacts.map(c => c.id === selectedContact.id ? completedContact : c));
+      const completedContact = {
+        ...updatedContact,
+        aiSearchStatus: "completed" as const,
+      };
+      setContacts(
+        contacts.map((c) =>
+          c.id === selectedContact.id ? completedContact : c
+        )
+      );
 
       // 通知を'completed'状態に更新
-      setNotifications(notifications.map(n =>
-        n.id === newNotification.id
-          ? { ...n, message: 'SNSプロフィール情報の検索が完了しました。', read: false }
-          : n
-      ));
+      setNotifications(
+        notifications.map((n) =>
+          n.id === newNotification.id
+            ? {
+                ...n,
+                message: "SNSプロフィール情報の検索が完了しました。",
+                read: false,
+              }
+            : n
+        )
+      );
     }, 3000);
   };
 
