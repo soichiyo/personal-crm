@@ -423,7 +423,7 @@ export const ContactDetailPage = ({
                 key={entry.id}
                 className={`flex gap-3 text-sm ${
                   entry.type === "birthday"
-                    ? "bg-pink-50 -mx-2 px-2 py-2 rounded-lg"
+                    ? "bg-gray-50 -mx-2 px-2 py-2 rounded-lg"
                     : ""
                 }`}
               >
@@ -431,12 +431,12 @@ export const ContactDetailPage = ({
                   {entry.date}
                 </span>
                 {entry.type === "birthday" && (
-                  <Cake className="w-4 h-4 text-pink-600 mt-0.5" />
+                  <Cake className="w-4 h-4 text-gray-600 mt-0.5" />
                 )}
                 <p
                   className={`${
                     entry.type === "birthday"
-                      ? "text-pink-900 font-medium"
+                      ? "text-gray-900 font-medium"
                       : "text-gray-700"
                   }`}
                 >

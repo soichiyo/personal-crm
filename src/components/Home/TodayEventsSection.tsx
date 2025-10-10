@@ -34,7 +34,7 @@ export const TodayEventsSection: React.FC<TodayEventsSectionProps> = ({
   return (
     <section className="mb-6">
       <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
-        <Cake className="w-5 h-5 text-pink-500" />
+        <Cake className="w-5 h-5 text-gray-600" />
         今日のイベント
       </h2>
 
@@ -47,15 +47,15 @@ export const TodayEventsSection: React.FC<TodayEventsSectionProps> = ({
           return (
             <div
               key={contact.id}
-              className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-xl p-4 shadow-sm"
+              className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
             >
               {/* カード内容 */}
               <div
                 onClick={() => onCardClick(contact.id)}
-                className="mb-4 cursor-pointer hover:bg-white/50 -m-4 p-4 rounded-t-xl transition-colors"
+                className="mb-4 cursor-pointer hover:bg-gray-50 -m-4 p-4 rounded-t-xl transition-colors"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-2xl overflow-hidden shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl overflow-hidden shrink-0">
                     {contact.photoUrl ? (
                       <img
                         src={contact.photoUrl}
@@ -69,7 +69,7 @@ export const TodayEventsSection: React.FC<TodayEventsSectionProps> = ({
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <Cake className="w-4 h-4 text-pink-600" />
+                      <Cake className="w-4 h-4 text-gray-600" />
                       <h3 className="font-semibold text-gray-900">
                         {contact.name}さんの誕生日
                       </h3>
@@ -88,7 +88,7 @@ export const TodayEventsSection: React.FC<TodayEventsSectionProps> = ({
               {onCelebration && (
                 <button
                   onClick={() => onCelebration(contact.id)}
-                  className="w-full px-4 py-2 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
                 >
                   <Heart className="w-4 h-4" />
                   お祝いを送る
