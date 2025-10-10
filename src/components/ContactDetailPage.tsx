@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { ArrowLeft, Edit3, Mail, Phone, MapPin, Globe, Plus, Sparkles, Cake } from 'lucide-react';
-import { Contact } from '../types/Contact';
+import { useState, useEffect } from "react";
+import { ArrowLeft, Edit3, Globe, Plus, Sparkles, Cake } from "lucide-react";
+import { Contact } from "../types/Contact";
 
 interface ContactDetailPageProps {
   contact: Contact;
@@ -13,34 +13,40 @@ interface ContactDetailPageProps {
 interface TimelineEntry {
   id: string;
   date: string;
-  type: 'note' | 'linkedin' | 'contact_created' | 'birthday';
+  type: "note" | "linkedin" | "contact_created" | "birthday";
   content: string;
 }
 
 interface ActivityEntry {
   id: string;
   date: string;
-  type: 'reminder_completed' | 'contact_created';
+  type: "reminder_completed" | "contact_created";
   content: string;
 }
 
-export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, autoOpenNoteInput = false }: ContactDetailPageProps) => {
+export const ContactDetailPage = ({
+  contact,
+  onClose,
+  onEdit,
+  onFollowUpClick,
+  autoOpenNoteInput = false,
+}: ContactDetailPageProps) => {
   const [showNoteInput, setShowNoteInput] = useState(autoOpenNoteInput);
-  const [noteText, setNoteText] = useState('');
+  const [noteText, setNoteText] = useState("");
 
   // Mock timeline data
   const [timeline, setTimeline] = useState<TimelineEntry[]>([
     {
-      id: '1',
-      date: '08.01',
-      type: 'linkedin',
-      content: 'LinkedInで投稿: 「この度私は...」',
+      id: "1",
+      date: "08.01",
+      type: "linkedin",
+      content: "LinkedInで投稿: 「この度私は...」",
     },
     {
-      id: '2',
-      date: '08.05',
-      type: 'note',
-      content: 'Note追加「会話で印象に残ったこと...」',
+      id: "2",
+      date: "08.05",
+      type: "note",
+      content: "Note追加「会話で印象に残ったこと...」",
     },
   ]);
 
@@ -49,15 +55,19 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
     if (contact.birthday) {
       const birthday = new Date(contact.birthday);
       const birthdayEntry: TimelineEntry = {
-        id: 'birthday',
-        date: `${String(birthday.getMonth() + 1).padStart(2, '0')}.${String(birthday.getDate()).padStart(2, '0')}`,
-        type: 'birthday',
-        content: `🎂 ${birthday.getFullYear()}年${birthday.getMonth() + 1}月${birthday.getDate()}日生まれ`,
+        id: "birthday",
+        date: `${String(birthday.getMonth() + 1).padStart(2, "0")}.${String(
+          birthday.getDate()
+        ).padStart(2, "0")}`,
+        type: "birthday",
+        content: `🎂 ${birthday.getFullYear()}年${
+          birthday.getMonth() + 1
+        }月${birthday.getDate()}日生まれ`,
       };
 
       // 既存のtimelineに誕生日エントリーがない場合のみ追加
-      setTimeline(prev => {
-        const hasBirthday = prev.some(entry => entry.type === 'birthday');
+      setTimeline((prev) => {
+        const hasBirthday = prev.some((entry) => entry.type === "birthday");
         if (!hasBirthday) {
           return [birthdayEntry, ...prev];
         }
@@ -69,22 +79,22 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
   // Mock activity data (V1: Reminder関連のアクティビティは非表示)
   const allActivities: ActivityEntry[] = [
     {
-      id: '1',
-      date: '08.25',
-      type: 'reminder_completed',
-      content: 'Reminder完了（フォロー済）',
+      id: "1",
+      date: "08.25",
+      type: "reminder_completed",
+      content: "Reminder完了（フォロー済）",
     },
     {
-      id: '2',
-      date: '08.01',
-      type: 'contact_created',
-      content: 'Contact作成',
+      id: "2",
+      date: "08.01",
+      type: "contact_created",
+      content: "Contact作成",
     },
   ];
 
   // Reminder関連のアクティビティをフィルタリング
   const activities = allActivities.filter(
-    (activity) => activity.type !== 'reminder_completed'
+    (activity) => activity.type !== "reminder_completed"
   );
 
   const handleAddNote = () => {
@@ -92,13 +102,16 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
 
     const newNote: TimelineEntry = {
       id: Date.now().toString(),
-      date: new Date().toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }),
-      type: 'note',
+      date: new Date().toLocaleDateString("ja-JP", {
+        month: "2-digit",
+        day: "2-digit",
+      }),
+      type: "note",
       content: `Note追加「${noteText}」`,
     };
 
     setTimeline([newNote, ...timeline]);
-    setNoteText('');
+    setNoteText("");
     setShowNoteInput(false);
   };
 
@@ -151,7 +164,9 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-gray-900">{contact.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {contact.name}
+              </h1>
               {contact.nameReading && (
                 <p className="text-sm text-gray-500">{contact.nameReading}</p>
               )}
@@ -162,71 +177,153 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
                 <p className="text-sm text-gray-600 mt-1">{contact.company}</p>
               )}
               {contact.tagline && contact.tagline !== contact.title && (
-                <p className="text-sm text-gray-700 mt-2 italic">{contact.tagline}</p>
+                <p className="text-sm text-gray-700 mt-2 italic">
+                  {contact.tagline}
+                </p>
               )}
             </div>
           </div>
 
-          {/* Bio */}
-          {contact.bio && (
-            <div className="mb-6">
-              <p className="text-gray-700 leading-relaxed">{contact.bio}</p>
+          {/* 基本情報セクション */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">基本情報</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">よみがな：</span>
+                <span className="text-gray-900">
+                  {contact.nameReading || "-"}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">会社名：</span>
+                <span className="text-gray-900">{contact.company || "-"}</span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">肩書：</span>
+                <span className="text-gray-900">{contact.title || "-"}</span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">
+                  メールアドレス：
+                </span>
+                <span className="text-gray-900">
+                  {contact.email ? (
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="hover:underline text-blue-600"
+                    >
+                      {contact.email}
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">電話番号：</span>
+                <span className="text-gray-900">
+                  {contact.phone ? (
+                    <a
+                      href={`tel:${contact.phone}`}
+                      className="hover:underline text-blue-600"
+                    >
+                      {contact.phone}
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </span>
+              </div>
             </div>
-          )}
-
-          {/* Contact Info */}
-          <div className="space-y-3 mb-6">
-            {contact.email && (
-              <div className="flex items-center gap-3 text-gray-700">
-                <Mail className="w-5 h-5 text-gray-400" />
-                <a href={`mailto:${contact.email}`} className="hover:underline">
-                  {contact.email}
-                </a>
-              </div>
-            )}
-            {contact.phone && (
-              <div className="flex items-center gap-3 text-gray-700">
-                <Phone className="w-5 h-5 text-gray-400" />
-                <a href={`tel:${contact.phone}`} className="hover:underline">
-                  {contact.phone}
-                </a>
-              </div>
-            )}
           </div>
 
-          {/* Organization Info */}
-          {contact.organization && (
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">組織情報</h3>
-              <div className="space-y-2 text-sm">
-                <p className="text-gray-700">
-                  <span className="font-medium">{contact.organization.name}</span>
-                </p>
-                {contact.organization.title && (
-                  <p className="text-gray-600">{contact.organization.title}</p>
-                )}
-                {contact.organization.address && (
-                  <div className="flex items-start gap-2 text-gray-600">
-                    <MapPin className="w-4 h-4 mt-0.5" />
-                    <span>{contact.organization.address}</span>
-                  </div>
-                )}
-                {contact.organization.url && (
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Globe className="w-4 h-4" />
-                    <a href={contact.organization.url} className="hover:underline">
-                      {contact.organization.url}
-                    </a>
-                  </div>
-                )}
+          {/* 人物メモ */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-2">人物メモ</h3>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              {contact.bio || "-"}
+            </p>
+          </div>
+
+          {/* 出会った情報 */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">出会った情報</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">
+                  出会った場所：
+                </span>
+                <span className="text-gray-900">
+                  {contact.metLocation || "-"}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">詳細：</span>
+                <span className="text-gray-900">{contact.metAt || "-"}</span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">タグ：</span>
+                <span className="text-gray-900">
+                  {contact.tags && contact.tags.length > 0
+                    ? contact.tags.join(", ")
+                    : "-"}
+                </span>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* SNS Links */}
-          {contact.social && Object.values(contact.social).some(v => v) && (
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">SNS</h3>
+          {/* 組織情報 */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">組織情報</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">組織名：</span>
+                <span className="text-gray-900">
+                  {contact.organization?.name || "-"}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">
+                  部署・役職：
+                </span>
+                <span className="text-gray-900">
+                  {contact.organization?.title || "-"}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">会社住所：</span>
+                <span className="text-gray-900">
+                  {contact.organization?.address || "-"}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">会社電話：</span>
+                <span className="text-gray-900">
+                  {contact.organization?.phone || "-"}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">会社URL：</span>
+                <span className="text-gray-900">
+                  {contact.organization?.url ? (
+                    <a
+                      href={contact.organization.url}
+                      className="hover:underline text-blue-600"
+                    >
+                      {contact.organization.url}
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* SNSアカウント */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">SNSアカウント</h3>
+            {contact.social && Object.values(contact.social).some((v) => v) ? (
               <div className="grid grid-cols-4 gap-3">
                 {Object.entries(contact.social).map(([platform, url]) => {
                   if (!url) return null;
@@ -236,7 +333,7 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex flex-col items-center gap-1 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="flex flex-col items-center gap-1 p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors"
                     >
                       <span className="text-xs text-gray-600 capitalize">
                         {getSNSIcon(platform)}
@@ -245,13 +342,15 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
                   );
                 })}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-sm text-gray-600">-</p>
+            )}
+          </div>
 
-          {/* Content URLs */}
-          {contact.contentUrls && contact.contentUrls.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">コンテンツ</h3>
+          {/* 関連記事・URL */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">関連記事・URL</h3>
+            {contact.contentUrls && contact.contentUrls.length > 0 ? (
               <div className="space-y-2">
                 {contact.contentUrls.map((url, index) => (
                   <a
@@ -266,8 +365,10 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
                   </a>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-sm text-gray-600">-</p>
+            )}
+          </div>
         </div>
 
         {/* Divider */}
@@ -299,7 +400,7 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
                 <button
                   onClick={() => {
                     setShowNoteInput(false);
-                    setNoteText('');
+                    setNoteText("");
                   }}
                   className="px-4 py-2 text-gray-600 hover:text-gray-900"
                 >
@@ -318,14 +419,27 @@ export const ContactDetailPage = ({ contact, onClose, onEdit, onFollowUpClick, a
           {/* Timeline Entries */}
           <div className="space-y-3">
             {timeline.map((entry) => (
-              <div key={entry.id} className={`flex gap-3 text-sm ${entry.type === 'birthday' ? 'bg-pink-50 -mx-2 px-2 py-2 rounded-lg' : ''}`}>
+              <div
+                key={entry.id}
+                className={`flex gap-3 text-sm ${
+                  entry.type === "birthday"
+                    ? "bg-pink-50 -mx-2 px-2 py-2 rounded-lg"
+                    : ""
+                }`}
+              >
                 <span className="text-gray-500 font-medium min-w-[40px]">
                   {entry.date}
                 </span>
-                {entry.type === 'birthday' && (
+                {entry.type === "birthday" && (
                   <Cake className="w-4 h-4 text-pink-600 mt-0.5" />
                 )}
-                <p className={`${entry.type === 'birthday' ? 'text-pink-900 font-medium' : 'text-gray-700'}`}>
+                <p
+                  className={`${
+                    entry.type === "birthday"
+                      ? "text-pink-900 font-medium"
+                      : "text-gray-700"
+                  }`}
+                >
                   {entry.content}
                 </p>
               </div>

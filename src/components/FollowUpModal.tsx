@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { Contact } from "../types/Contact";
 import { Modal } from "./common/Modal";
-import { Copy, Clock, Check } from "lucide-react";
-import { generateFollowUpSuggestion } from "../utils/aiFollowUpGenerator";
+import { Copy, Check } from "lucide-react";
+import {
+  generateFollowUpSuggestion,
+  generateBirthdaySuggestion,
+} from "../utils/aiFollowUpGenerator";
 
 interface FollowUpModalProps {
   isOpen: boolean;
   contact: Contact;
   onClose: () => void;
   onMarkAsSent: (message: string) => void;
+  messageType?: "thank-you" | "birthday";
 }
 
 export const FollowUpModal: React.FC<FollowUpModalProps> = ({
@@ -16,10 +20,21 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
   contact,
   onClose,
   onMarkAsSent,
+  messageType = "thank-you",
 }) => {
-  const suggestion = generateFollowUpSuggestion(contact);
+  // メッセージタイプに応じて生成関数を切り替え
+  const suggestion =
+    messageType === "birthday"
+      ? generateBirthdaySuggestion(contact)
+      : generateFollowUpSuggestion(contact);
   const [draft, setDraft] = useState(suggestion.draft);
   const [showCopyToast, setShowCopyToast] = useState(false);
+
+  // メッセージタイプに応じてタイトルを切り替え
+  const modalTitle =
+    messageType === "birthday"
+      ? `${contact.name}さんへのお祝いメッセージ`
+      : `${contact.name}さんへのフォローアップ提案`;
 
   const handleCopy = async () => {
     try {
@@ -27,18 +42,13 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
       setShowCopyToast(true);
       setTimeout(() => {
         setShowCopyToast(false);
+        onMarkAsSent(draft); // コピー時も完了として扱う
         onClose();
       }, 1000);
     } catch (err) {
       console.error("Failed to copy:", err);
       alert("コピーに失敗しました");
     }
-  };
-
-  const handleLater = () => {
-    // 後で機能は後期実装
-    alert("後で確認（張りぼて）");
-    onClose();
   };
 
   const handleMarkAsSent = () => {
@@ -52,7 +62,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`${contact.name}さんへのフォローアップ提案`}
+      title={modalTitle}
       bodyClassName="p-0 flex flex-col"
     >
       <div className="flex flex-col">
@@ -76,26 +86,18 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
         </div>
 
         {/* アクションボタン */}
-        <div className="px-6 py-4 border-t border-gray-200 space-y-2">
-          <button
-            onClick={handleCopy}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
-          >
-            <Copy className="w-4 h-4" />
-            コピー
-          </button>
-
+        <div className="px-6 py-4 border-t border-gray-200">
           <div className="flex gap-2">
             <button
-              onClick={handleLater}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-900 font-medium rounded-xl hover:bg-gray-200 transition-colors"
+              onClick={handleCopy}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-900 font-medium rounded-lg hover:bg-gray-200 transition-colors"
             >
-              <Clock className="w-4 h-4" />
-              後で
+              <Copy className="w-4 h-4" />
+              コピー
             </button>
             <button
               onClick={handleMarkAsSent}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
             >
               <Check className="w-4 h-4" />
               送信済にする

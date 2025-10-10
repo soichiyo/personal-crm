@@ -13,9 +13,10 @@ export interface Contact {
   metLocation?: string;
   tags: string[];
   profileEmoji?: string;
-  status: 'new' | 'archived' | 'active';
-  aiSearchStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "new" | "archived" | "active";
+  aiSearchStatus?: "pending" | "processing" | "completed" | "failed";
   birthday?: Date; // 誕生日
+  birthdayMessageSent?: boolean; // 誕生日メッセージ送信済みフラグ
 
   // 1009-02 拡張フィールド
   prairieCardUrl?: string; // プレーリーカードURL

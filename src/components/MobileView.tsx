@@ -44,6 +44,7 @@ export const MobileView = ({
   const [showContactDetail, setShowContactDetail] = useState(false);
   const [showKeepInTouchModal, setShowKeepInTouchModal] = useState(false);
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
+  const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [currentTab, setCurrentTab] = useState("home");
   const [editOrigin, setEditOrigin] = useState<"detail" | "direct" | null>(
@@ -150,6 +151,14 @@ export const MobileView = ({
     }
   };
 
+  const handleCelebration = (id: number) => {
+    const contact = contacts.find((c) => c.id === id);
+    if (contact) {
+      setSelectedContact(contact);
+      setShowCelebrationModal(true);
+    }
+  };
+
   const handleCloseEdit = () => {
     if (selectedContact) {
       addActivity(`${selectedContact.name}さんの情報を更新しました`);
@@ -241,6 +250,7 @@ export const MobileView = ({
           <TodayEventsSection
             contacts={contacts}
             onCardClick={handleCardClick}
+            onCelebration={handleCelebration}
           />
           {/* V1: リマインダー機能は非表示（V2以降で復活予定） */}
           {/* <ReminderSection
@@ -288,41 +298,47 @@ export const MobileView = ({
           </div>
 
           <div className="divide-y divide-gray-100">
-            {contacts.map((contact) => (
-              <div
-                key={contact.id}
-                className="p-4 hover:bg-gray-50 cursor-pointer"
-                onClick={() => handleCardClick(contact.id)}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl overflow-hidden shrink-0">
-                    {contact.photoUrl ? (
-                      <img
-                        src={contact.photoUrl}
-                        alt={contact.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span>{contact.avatar}</span>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">
-                      {contact.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 truncate">
-                      {contact.title}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate mb-2">
-                      {contact.company}
-                    </p>
-                    <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
-                      {contact.source}
-                    </span>
+            {[...contacts]
+              .sort(
+                (a, b) =>
+                  new Date(b.createdDate).getTime() -
+                  new Date(a.createdDate).getTime()
+              )
+              .map((contact) => (
+                <div
+                  key={contact.id}
+                  className="p-4 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => handleCardClick(contact.id)}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl overflow-hidden shrink-0">
+                      {contact.photoUrl ? (
+                        <img
+                          src={contact.photoUrl}
+                          alt={contact.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span>{contact.avatar}</span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate">
+                        {contact.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 truncate">
+                        {contact.title}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate mb-2">
+                        {contact.company}
+                      </p>
+                      <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                        {contact.source}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       );
@@ -356,7 +372,7 @@ export const MobileView = ({
                   <Link2 className="w-5 h-5 text-gray-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-800">Gmail</p>
+                  <p className="font-medium text-gray-800">Slack</p>
                   <p className="text-xs text-gray-500">未接続</p>
                 </div>
               </div>
@@ -371,7 +387,7 @@ export const MobileView = ({
                   <Link2 className="w-5 h-5 text-gray-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-800">Slack</p>
+                  <p className="font-medium text-gray-800">Facebook</p>
                   <p className="text-xs text-gray-500">未接続</p>
                 </div>
               </div>
@@ -436,13 +452,7 @@ export const MobileView = ({
       </div>
 
       <div className="p-4 flex items-center justify-between bg-white border-b border-gray-200 shrink-0">
-        <button
-          onClick={() => setCurrentTab("home")}
-          className="p-2 rounded-full transition-colors hover:bg-gray-100"
-          aria-label="ホームへ戻る"
-        >
-          <Home className="w-6 h-6 text-gray-600" />
-        </button>
+        <h1 className="text-lg font-bold text-gray-900">Personal CRM</h1>
         <NotificationIcon
           unreadCount={notifications.filter((n) => !n.read).length}
           onClick={() => setShowNotificationModal(true)}
@@ -539,12 +549,45 @@ export const MobileView = ({
             setShowFollowUpModal(false);
           }}
           onMarkAsSent={() => {
+            // 新着コンタクトのステータスをactiveに変更（リストから消える）
+            setContacts(
+              contacts.map((c) =>
+                c.id === selectedContact.id
+                  ? { ...c, status: "active" as const }
+                  : c
+              )
+            );
             addActivity(
               `${selectedContact.name}さんにフォローアップメッセージを送信しました`,
               selectedContact.id.toString()
             );
             setShowFollowUpModal(false);
-            alert("送信済にしました ✨");
+          }}
+        />
+      )}
+
+      {showCelebrationModal && selectedContact && (
+        <FollowUpModal
+          isOpen={showCelebrationModal}
+          contact={selectedContact}
+          messageType="birthday"
+          onClose={() => {
+            setShowCelebrationModal(false);
+          }}
+          onMarkAsSent={() => {
+            // 誕生日メッセージ送信済みフラグを立てる（リストから消える）
+            setContacts(
+              contacts.map((c) =>
+                c.id === selectedContact.id
+                  ? { ...c, birthdayMessageSent: true }
+                  : c
+              )
+            );
+            addActivity(
+              `${selectedContact.name}さんにお祝いメッセージを送信しました`,
+              selectedContact.id.toString()
+            );
+            setShowCelebrationModal(false);
           }}
         />
       )}
