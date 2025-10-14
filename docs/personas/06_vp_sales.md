@@ -1,4 +1,4 @@
-# ペルソナ7: スタートアップのCxO（VP of Sales / VP of Marketing）
+# ペルソナ6: スタートアップのCxO（VP of Sales / VP of Marketing）
 
 ### デモグラフィック
 - **名前**: 小林 麻衣
