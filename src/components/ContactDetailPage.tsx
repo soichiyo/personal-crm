@@ -542,7 +542,7 @@ export const ContactDetailPage = ({
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-100 text-blue-900 rounded-lg font-medium hover:bg-blue-200 transition-colors"
           >
             <Globe className="w-5 h-5" />
-            <span>深く掘る</span>
+            <span>この人物を深く掘る</span>
           </button>
         </div>
 

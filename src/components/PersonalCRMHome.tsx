@@ -11,6 +11,22 @@ export const PersonalCRMHome = () => {
 
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden">
+      {/* Screen Identifier for Testing - 最上位固定バー */}
+      <div className="fixed top-0 left-0 right-0 bg-yellow-100 border-b border-yellow-300 px-4 py-2 flex items-center justify-center gap-2 z-[9999]">
+        <span className="text-xs font-mono font-semibold text-yellow-900">
+          画面ID: {viewMode === "mobile" ? "MOB-APP-ROOT" : "DSK-001"}
+        </span>
+        <span className="text-xs text-yellow-700">|</span>
+        <span className="text-xs text-yellow-800">
+          {viewMode === "mobile"
+            ? "モバイル（3タブ）"
+            : "デスクトップ（サイドバー）"}
+        </span>
+      </div>
+
+      {/* スペーサー: 固定バーの高さ分 */}
+      <div className="h-10 shrink-0"></div>
+
       {/* View Mode Switcher */}
       <div className="bg-gray-800 text-white p-3 flex justify-center gap-3 shrink-0">
         <button
@@ -35,22 +51,6 @@ export const PersonalCRMHome = () => {
         </button>
       </div>
 
-      {/* Screen Identifier for Testing - 最上位固定バー */}
-      <div className="fixed top-0 left-0 right-0 bg-yellow-100 border-b border-yellow-300 px-4 py-2 flex items-center justify-center gap-2 z-[9999]">
-        <span className="text-xs font-mono font-semibold text-yellow-900">
-          画面ID: {viewMode === "mobile" ? "MOB-APP-ROOT" : "DSK-001"}
-        </span>
-        <span className="text-xs text-yellow-700">|</span>
-        <span className="text-xs text-yellow-800">
-          {viewMode === "mobile"
-            ? "モバイル（3タブ）"
-            : "デスクトップ（サイドバー）"}
-        </span>
-      </div>
-
-      {/* スペーサー: 固定バーの高さ分 */}
-      <div className="h-10 shrink-0"></div>
-
       <div className="flex-1 overflow-hidden flex justify-center items-center bg-gray-900 p-4">
         <div
           className="bg-white shadow-2xl overflow-hidden"
@@ -72,6 +72,8 @@ export const PersonalCRMHome = () => {
             <DesktopView
               contacts={sampleContacts}
               notifications={sampleNotifications}
+              reminders={sampleReminders}
+              activities={sampleActivities}
             />
           )}
         </div>

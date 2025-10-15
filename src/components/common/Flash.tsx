@@ -50,14 +50,15 @@ export const Flash: React.FC<FlashProps> = ({
 
   return (
     <div
-      className={`fixed top-0 left-0 right-0 z-[9999] ${bgColors[type]} text-white px-4 py-3 shadow-lg animate-in slide-in-from-top duration-300`}
+      className={`absolute top-0 left-0 right-0 z-[9999] ${bgColors[type]} text-white px-4 py-3 shadow-lg animate-in slide-in-from-top duration-300`}
       role="alert"
       style={{
-        position: "fixed",
+        position: "absolute",
         top: 0,
         left: 0,
         right: 0,
         zIndex: 9999,
+        width: "100%",
         maxWidth: "393px",
         margin: "0 auto",
       }}
