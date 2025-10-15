@@ -10,7 +10,6 @@ import {
   generateFollowUpByTone,
   generateBirthdayByTone,
   ToneSuggestion,
-  ToneType,
 } from "../utils/aiFollowUpGenerator";
 
 interface FollowUpModalProps {
