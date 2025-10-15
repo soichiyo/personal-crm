@@ -13,22 +13,30 @@ export const TodayEventsSection: React.FC<TodayEventsSectionProps> = ({
   onCardClick,
   onCelebration,
 }) => {
-  const today = new Date();
-  const todayMonth = today.getMonth();
-  const todayDate = today.getDate();
-
-  // 今日が誕生日の人を抽出（メッセージ未送信のみ）
+  // 誕生日が今日または近日中（1週間以内）のコンタクトを表示
   const birthdayContacts = contacts.filter((contact) => {
     if (!contact.birthday) return false;
     if (contact.birthdayMessageSent) return false; // 送信済みは除外
+
+    const today = new Date();
     const birthday = new Date(contact.birthday);
-    return (
-      birthday.getMonth() === todayMonth && birthday.getDate() === todayDate
+
+    // 今年の誕生日を計算
+    const thisYearBirthday = new Date(
+      today.getFullYear(),
+      birthday.getMonth(),
+      birthday.getDate()
     );
+
+    // 今日から1週間以内の誕生日を表示
+    const diffTime = thisYearBirthday.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays >= 0 && diffDays <= 7;
   });
 
   if (birthdayContacts.length === 0) {
-    return null; // 誕生日の人がいない場合は表示しない
+    return null;
   }
 
   return (
@@ -41,7 +49,8 @@ export const TodayEventsSection: React.FC<TodayEventsSectionProps> = ({
       <div className="space-y-3">
         {birthdayContacts.map((contact) => {
           const age = contact.birthday
-            ? today.getFullYear() - new Date(contact.birthday).getFullYear()
+            ? new Date().getFullYear() -
+              new Date(contact.birthday).getFullYear()
             : null;
 
           return (

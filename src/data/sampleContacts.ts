@@ -6,7 +6,7 @@ export const sampleContacts: Contact[] = [
     name: "田中 太郎",
     company: "ABC株式会社",
     title: "営業部長",
-    source: "LinkedIn",
+    source: "流入ソース",
     metAt: "2024年10月1日 - Tech Conference Tokyo",
     avatar: "👨‍💼",
     priority: "high",
@@ -16,8 +16,17 @@ export const sampleContacts: Contact[] = [
     profileEmoji: "👨‍💼",
     status: "active",
     aiSearchStatus: "completed",
-    birthday: new Date("1985-10-10"), // 今日が誕生日
+    birthday: (() => {
+      // デモ用：常に今日を誕生日として設定
+      const today = new Date();
+      return new Date(1985, today.getMonth(), today.getDate());
+    })(),
     email: "taro.tanaka@abc-corp.co.jp",
+    contentUrls: [
+      "https://abc-corp.co.jp/news/2024/sales-strategy",
+      "https://linkedin.com/in/taro-tanaka-abc",
+      "https://note.com/taro-tanaka/sales-tips",
+    ],
     // Facebookなし → Emailのみのパターン
   },
   {
@@ -25,7 +34,7 @@ export const sampleContacts: Contact[] = [
     name: "佐藤 花子",
     company: "XYZ Corporation",
     title: "Product Manager",
-    source: "Prairie Card",
+    source: "流入ソース",
     metAt: "2024年10月3日 - Startup Meetup",
     avatar: "👩‍💼",
     priority: "high",
@@ -66,6 +75,8 @@ export const sampleContacts: Contact[] = [
       "https://xyz-corp.com/blog/product-strategy-2024",
       "https://note.com/hanako_sato/n/startup-mindset",
       "https://techcrunch.com/interview/hanako-sato",
+      "https://github.com/hanako-sato/portfolio",
+      "https://speakerdeck.com/hanako-sato/product-management",
     ],
   },
   {
@@ -73,7 +84,7 @@ export const sampleContacts: Contact[] = [
     name: "鈴木 一郎",
     company: "DEF Technologies",
     title: "CTO",
-    source: "名刺スキャン",
+    source: "流入ソース",
     metAt: "2024年10月5日 - AI Summit",
     avatar: "👨‍💻",
     priority: "medium",
@@ -84,6 +95,11 @@ export const sampleContacts: Contact[] = [
     status: "new",
     aiSearchStatus: "processing",
     birthday: new Date("1988-11-15"), // 11月15日生まれ
+    contentUrls: [
+      "https://def-tech.com/blog/ai-innovation-2024",
+      "https://qiita.com/ichiro-suzuki/ai-research",
+      "https://connpass.com/event/ai-summit-2024",
+    ],
     // Emailなし → Messengerのみのパターン
     social: {
       facebook: "https://facebook.com/ichiro.suzuki",
@@ -94,7 +110,7 @@ export const sampleContacts: Contact[] = [
     name: "高橋 美咲",
     company: "GHI Ventures",
     title: "Investment Manager",
-    source: "Facebook",
+    source: "流入ソース",
     metAt: "2024年10月7日 - Networking Event",
     avatar: "👩‍💼",
     priority: "high",
@@ -105,13 +121,18 @@ export const sampleContacts: Contact[] = [
     status: "new",
     aiSearchStatus: "failed",
     email: "misaki.takahashi@ghi-ventures.jp",
+    contentUrls: [
+      "https://ghi-ventures.com/insights/startup-investment-trends",
+      "https://forbes.com/profile/misaki-takahashi",
+      "https://crunchbase.com/person/misaki-takahashi",
+    ],
   },
   {
     id: 5,
     name: "渡辺 健太",
     company: "JKL Design Studio",
     title: "Creative Director",
-    source: "LinkedIn",
+    source: "流入ソース",
     metAt: "2024年10月8日 - Design Conference",
     avatar: "🎨",
     priority: "medium",
@@ -122,5 +143,10 @@ export const sampleContacts: Contact[] = [
     status: "active",
     aiSearchStatus: "pending",
     email: "kenta.watanabe@jkl-design.studio",
+    contentUrls: [
+      "https://jkl-design.studio/portfolio/creative-director",
+      "https://dribbble.com/kenta-watanabe",
+      "https://behance.net/kenta-watanabe",
+    ],
   },
 ];

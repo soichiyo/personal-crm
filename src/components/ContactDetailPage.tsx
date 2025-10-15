@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Edit3, Globe, Plus, Sparkles, Cake } from "lucide-react";
 import { Contact } from "../types/Contact";
+import { NoteModal } from "./NoteModal";
 
 interface ContactDetailPageProps {
   contact: Contact;
   onClose: () => void;
   onEdit: (contact: Contact) => void;
   onFollowUpClick?: () => void;
+  onDeepSearchClick?: () => void;
   autoOpenNoteInput?: boolean;
 }
 
@@ -29,10 +31,13 @@ export const ContactDetailPage = ({
   onClose,
   onEdit,
   onFollowUpClick,
+  onDeepSearchClick,
   autoOpenNoteInput = false,
 }: ContactDetailPageProps) => {
   const [showNoteInput, setShowNoteInput] = useState(autoOpenNoteInput);
   const [noteText, setNoteText] = useState("");
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<TimelineEntry | null>(null);
 
   // Mock timeline data
   const [timeline, setTimeline] = useState<TimelineEntry[]>([
@@ -237,14 +242,6 @@ export const ContactDetailPage = ({
             </div>
           </div>
 
-          {/* 人物メモ */}
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-2">人物メモ</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {contact.bio || "-"}
-            </p>
-          </div>
-
           {/* 出会った情報 */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <h3 className="font-semibold text-gray-900 mb-3">出会った情報</h3>
@@ -261,15 +258,26 @@ export const ContactDetailPage = ({
                 <span className="text-gray-600 w-32 shrink-0">詳細：</span>
                 <span className="text-gray-900">{contact.metAt || "-"}</span>
               </div>
-              <div className="flex">
-                <span className="text-gray-600 w-32 shrink-0">タグ：</span>
-                <span className="text-gray-900">
-                  {contact.tags && contact.tags.length > 0
-                    ? contact.tags.join(", ")
-                    : "-"}
-                </span>
-              </div>
             </div>
+          </div>
+
+          {/* タグ */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">タグ</h3>
+            {contact.tags && contact.tags.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {contact.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-600">-</p>
+            )}
           </div>
 
           {/* 組織情報 */}
@@ -351,17 +359,44 @@ export const ContactDetailPage = ({
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <h3 className="font-semibold text-gray-900 mb-3">関連記事・URL</h3>
             {contact.contentUrls && contact.contentUrls.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-4">
                 {contact.contentUrls.map((url, index) => (
                   <a
                     key={index}
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-blue-600 hover:underline text-sm"
+                    className="block bg-white rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200"
                   >
-                    <Globe className="w-4 h-4" />
-                    {url}
+                    {/* サムネイル画像 */}
+                    <div className="w-full h-32 bg-gray-200 rounded-lg mb-3 flex items-center justify-center">
+                      <Globe className="w-8 h-8 text-gray-400" />
+                    </div>
+
+                    {/* タイトル */}
+                    <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {url.includes("xyz-corp.com")
+                        ? "XYZ Corporation Product Strategy 2024"
+                        : url.includes("note.com")
+                        ? "スタートアップマインドセットについて"
+                        : url.includes("techcrunch.com")
+                        ? "TechCrunch Interview: Hanako Sato"
+                        : "関連記事タイトル"}
+                    </h4>
+
+                    {/* メタディスクリプション */}
+                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                      {url.includes("xyz-corp.com")
+                        ? "2024年のプロダクト戦略について、市場動向とユーザーニーズを分析した包括的なレポートです。"
+                        : url.includes("note.com")
+                        ? "スタートアップで働く上で重要なマインドセットと、成功するための考え方について考察しています。"
+                        : url.includes("techcrunch.com")
+                        ? "プロダクトマネージャーとしての経験と、テック業界でのキャリアについて語ったインタビュー記事です。"
+                        : "関連記事の説明文がここに表示されます。"}
+                    </p>
+
+                    {/* URL */}
+                    <p className="text-xs text-blue-600 truncate">{url}</p>
                   </a>
                 ))}
               </div>
@@ -380,9 +415,10 @@ export const ContactDetailPage = ({
             <h2 className="text-xl font-bold text-gray-900">Timeline</h2>
             <button
               onClick={() => setShowNoteInput(!showNoteInput)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-colors text-sm font-medium shadow-sm"
             >
-              <Plus className="w-5 h-5 text-gray-600" />
+              <Plus className="w-4 h-4" />
+              <span>ノートを追加</span>
             </button>
           </div>
 
@@ -417,15 +453,23 @@ export const ContactDetailPage = ({
           )}
 
           {/* Timeline Entries */}
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-96 overflow-y-auto">
             {timeline.map((entry) => (
               <div
                 key={entry.id}
                 className={`flex gap-3 text-sm ${
                   entry.type === "birthday"
                     ? "bg-gray-50 -mx-2 px-2 py-2 rounded-lg"
+                    : entry.type === "note"
+                    ? "cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-colors border border-transparent hover:border-gray-200"
                     : ""
                 }`}
+                onClick={() => {
+                  if (entry.type === "note") {
+                    setSelectedNote(entry);
+                    setShowNoteModal(true);
+                  }
+                }}
               >
                 <span className="text-gray-500 font-medium min-w-[40px]">
                   {entry.date}
@@ -434,13 +478,20 @@ export const ContactDetailPage = ({
                   <Cake className="w-4 h-4 text-gray-600 mt-0.5" />
                 )}
                 <p
-                  className={`${
+                  className={`flex-1 ${
                     entry.type === "birthday"
                       ? "text-gray-900 font-medium"
+                      : entry.type === "note"
+                      ? "text-gray-700 hover:text-gray-900 line-clamp-2"
                       : "text-gray-700"
                   }`}
                 >
                   {entry.content}
+                  {entry.type === "note" && (
+                    <span className="text-xs text-gray-400 ml-2">
+                      タップして展開
+                    </span>
+                  )}
                 </p>
               </div>
             ))}
@@ -469,7 +520,7 @@ export const ContactDetailPage = ({
         <div className="h-2 bg-gray-100"></div>
 
         {/* Action Section */}
-        <div className="px-6 py-6">
+        <div className="px-6 py-6 space-y-3">
           <button
             onClick={() => {
               if (onFollowUpClick) {
@@ -481,11 +532,35 @@ export const ContactDetailPage = ({
             <Sparkles className="w-5 h-5" />
             <span>フォローアップ文章を作成</span>
           </button>
+
+          <button
+            onClick={() => {
+              if (onDeepSearchClick) {
+                onDeepSearchClick();
+              }
+            }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-100 text-blue-900 rounded-lg font-medium hover:bg-blue-200 transition-colors"
+          >
+            <Globe className="w-5 h-5" />
+            <span>深く掘る</span>
+          </button>
         </div>
 
         {/* Bottom Spacing */}
         <div className="h-20"></div>
       </div>
+
+      {/* Note Modal */}
+      {showNoteModal && selectedNote && (
+        <NoteModal
+          isOpen={showNoteModal}
+          note={selectedNote}
+          onClose={() => {
+            setShowNoteModal(false);
+            setSelectedNote(null);
+          }}
+        />
+      )}
     </div>
   );
 };

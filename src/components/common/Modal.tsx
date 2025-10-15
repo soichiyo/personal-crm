@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import React, { useEffect } from "react";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -19,24 +19,24 @@ export const Modal: React.FC<ModalProps> = ({
   // ESCキーでモーダルを閉じる
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
   // モーダルが開いているときはbodyのスクロールを防ぐ
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -51,7 +51,10 @@ export const Modal: React.FC<ModalProps> = ({
       />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-sm max-h-[844px] mx-auto bg-white rounded-t-2xl sm:rounded-2xl shadow-xl animate-in slide-in-from-bottom sm:fade-in duration-300 flex flex-col">
+      <div
+        className="relative w-full max-h-[844px] mx-auto bg-white rounded-t-2xl sm:rounded-2xl shadow-xl animate-in slide-in-from-bottom sm:fade-in duration-300 flex flex-col"
+        style={{ maxWidth: "320px" }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
@@ -67,7 +70,7 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Body */}
         <div
           className={`flex-1 overflow-y-auto ${
-            bodyClassName ? bodyClassName : 'px-6 py-4'
+            bodyClassName ? bodyClassName : "px-6 py-4"
           }`}
         >
           {children}

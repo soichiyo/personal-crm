@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { Contact } from "../types/Contact";
 import { Modal } from "./common/Modal";
-import { Copy, Check, Mail, MessageCircle } from "lucide-react";
+import { Copy, Check, Mail, MessageCircle, Edit3, ChevronRight } from "lucide-react";
 import {
   generateFollowUpSuggestion,
   generateBirthdaySuggestion,
+  getFollowUpToneOptions,
+  getBirthdayToneOptions,
+  generateFollowUpByTone,
+  generateBirthdayByTone,
+  ToneSuggestion,
+  ToneType,
 } from "../utils/aiFollowUpGenerator";
 
 interface FollowUpModalProps {
@@ -27,7 +33,17 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
     messageType === "birthday"
       ? generateBirthdaySuggestion(contact)
       : generateFollowUpSuggestion(contact);
-  const [draft, setDraft] = useState(suggestion.draft);
+
+  // トーン選択の状態管理
+  const [toneSelectionMode, setToneSelectionMode] = useState(true); // 最初はトーン選択画面
+  const [toneSuggestions] = useState<ToneSuggestion[]>(
+    messageType === "birthday"
+      ? getBirthdayToneOptions()
+      : getFollowUpToneOptions()
+  );
+  const [selectedTone, setSelectedTone] = useState<ToneSuggestion | null>(null);
+  const [draft, setDraft] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false); // LLM生成中フラグ
   const [showCopyToast, setShowCopyToast] = useState(false);
   const [showEmailClientModal, setShowEmailClientModal] = useState(false);
   const [showMessengerConfirmModal, setShowMessengerConfirmModal] =
@@ -38,6 +54,32 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
     messageType === "birthday"
       ? `${contact.name}さんへのお祝いメッセージ`
       : `${contact.name}さんへのフォローアップ提案`;
+
+  // トーン選択ハンドラー（非同期生成）
+  const handleSelectTone = async (tone: ToneSuggestion) => {
+    setSelectedTone(tone);
+    setIsGenerating(true);
+
+    // モック: 1.5秒の遅延でLLM生成をシミュレート
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // メッセージタイプに応じて生成関数を切り替え
+    const generatedDraft =
+      messageType === "birthday"
+        ? generateBirthdayByTone(contact, tone.tone)
+        : generateFollowUpByTone(contact, tone.tone);
+
+    setDraft(generatedDraft);
+    setIsGenerating(false);
+    setToneSelectionMode(false); // ドラフト編集画面に切り替え
+  };
+
+  // 「自分で書く」選択ハンドラー
+  const handleWriteOwn = () => {
+    setSelectedTone(null);
+    setDraft(""); // 空の文面
+    setToneSelectionMode(false); // ドラフト編集画面に切り替え（空白の状態）
+  };
 
   const handleCopy = async () => {
     try {
@@ -137,58 +179,132 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
           <p className="text-sm text-blue-900">💡 {suggestion.reason}</p>
         </div>
 
-        {/* ドラフト文面 */}
-        <div className="px-6 py-4">
-          <label className="block text-sm font-semibold text-gray-900 mb-2">
-            ドラフト文面
-          </label>
-          <textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            className="w-full h-48 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            placeholder="フォローアップメッセージを編集..."
-          />
-          <p className="text-xs text-gray-500 mt-2">文面は自由に編集できます</p>
-        </div>
+        {/* トーン選択モード */}
+        {toneSelectionMode ? (
+          <div className="px-6 py-4">
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">
+              トーンを選んでください
+            </h3>
+            <p className="text-xs text-gray-500 mb-4">
+              選択後、文面の編集と送信方法を選べます
+            </p>
+            <div className="space-y-3">
+              {toneSuggestions.map((tone) => (
+                <button
+                  key={tone.tone}
+                  onClick={() => handleSelectTone(tone)}
+                  className="w-full text-left bg-white border-2 border-gray-200 rounded-lg p-4 hover:border-gray-900 hover:shadow-md transition-all group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{tone.icon}</span>
+                      <div>
+                        <div className="font-semibold text-gray-900">
+                          {tone.label}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-0.5">
+                          {tone.description}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors flex-shrink-0" />
+                  </div>
+                </button>
+              ))}
 
-        {/* アクションボタン */}
-        <div className="px-6 py-4 border-t border-gray-200 space-y-2">
-          <button
-            onClick={handleCopy}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-900 font-medium rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            <Copy className="w-4 h-4" />
-            コピー
-          </button>
+              {/* 区切り線 */}
+              <div className="flex items-center gap-3 py-2">
+                <div className="flex-1 border-t border-gray-200"></div>
+                <span className="text-xs text-gray-400">または</span>
+                <div className="flex-1 border-t border-gray-200"></div>
+              </div>
 
-          {contact.email && (
+              {/* 自分で書くボタン */}
+              <button
+                onClick={handleWriteOwn}
+                className="w-full text-left bg-white border-2 border-gray-200 rounded-lg p-4 hover:border-gray-900 hover:shadow-md transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Edit3 className="w-6 h-6 text-gray-600" />
+                    <span className="font-semibold text-gray-900">
+                      自分で書く
+                    </span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" />
+                </div>
+                <p className="text-xs text-gray-500 mt-2 ml-9">
+                  空白の状態から自由に作成できます
+                </p>
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* ドラフト編集モード */
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-semibold text-gray-900">
+                ドラフト文面
+              </label>
+              <button
+                onClick={() => setToneSelectionMode(true)}
+                className="text-xs text-blue-600 hover:text-blue-800"
+              >
+                ← トーンを変更
+              </button>
+            </div>
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              className="w-full h-48 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              placeholder="フォローアップメッセージを編集..."
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              文面は自由に編集できます
+            </p>
+          </div>
+        )}
+
+        {/* アクションボタン（ドラフト編集モードのみ表示） */}
+        {!toneSelectionMode && (
+          <div className="px-6 py-4 border-t border-gray-200 space-y-2">
             <button
-              onClick={handleSendEmail}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+              onClick={handleCopy}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-900 font-medium rounded-lg hover:bg-gray-200 transition-colors"
             >
-              <Mail className="w-4 h-4" />
-              メールで送る
+              <Copy className="w-4 h-4" />
+              コピー
             </button>
-          )}
 
-          {contact.social?.facebook && (
+            {contact.email && (
+              <button
+                onClick={handleSendEmail}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                メールで送る
+              </button>
+            )}
+
+            {contact.social?.facebook && (
+              <button
+                onClick={handleOpenMessenger}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Messengerで送る
+              </button>
+            )}
+
             <button
-              onClick={handleOpenMessenger}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+              onClick={handleMarkAsSent}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
             >
-              <MessageCircle className="w-4 h-4" />
-              Messengerで送る
+              <Check className="w-4 h-4" />
+              送信済にする
             </button>
-          )}
-
-          <button
-            onClick={handleMarkAsSent}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <Check className="w-4 h-4" />
-            送信済にする
-          </button>
-        </div>
+          </div>
+        )}
 
         {/* コピー完了Toast */}
         {showCopyToast && (
@@ -257,6 +373,24 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
                 >
                   キャンセル
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ローディングモーダル */}
+        {isGenerating && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4 pt-10">
+            <div className="bg-white rounded-2xl p-8 w-full max-w-sm animate-in fade-in zoom-in duration-200">
+              <div className="flex flex-col items-center">
+                {/* ローディングスピナー */}
+                <div className="w-16 h-16 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin mb-4"></div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  メッセージを生成中...
+                </h3>
+                <p className="text-sm text-gray-600 text-center">
+                  {selectedTone?.label}トーンで作成しています
+                </p>
               </div>
             </div>
           </div>

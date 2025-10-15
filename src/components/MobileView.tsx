@@ -13,6 +13,7 @@ import { ContactEditModal } from "./ContactEditModal";
 import { ContactDetailPage } from "./ContactDetailPage";
 import { KeepInTouchModal } from "./KeepInTouchModal";
 import { FollowUpModal } from "./FollowUpModal";
+import { AddNoteModal } from "./AddNoteModal";
 import { NotificationIcon } from "./NotificationIcon";
 import { NotificationModal } from "./NotificationModal";
 import { NewContactsSection } from "./Home/NewContactsSection";
@@ -45,6 +46,7 @@ export const MobileView = ({
   const [showKeepInTouchModal, setShowKeepInTouchModal] = useState(false);
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
+  const [showAddNoteModal, setShowAddNoteModal] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [currentTab, setCurrentTab] = useState("home");
   const [editOrigin, setEditOrigin] = useState<"detail" | "direct" | null>(
@@ -56,6 +58,12 @@ export const MobileView = ({
   const [flashVisible, setFlashVisible] = useState(false);
   const [flashMessage, setFlashMessage] = useState("");
   const [flashType, setFlashType] = useState<FlashType>("info");
+  const [flashActionText, setFlashActionText] = useState<string | undefined>(
+    undefined
+  );
+  const [flashAction, setFlashAction] = useState<(() => void) | undefined>(
+    undefined
+  );
 
   // Timeline settings state
   const [timelineSettings, setTimelineSettings] = useState<TimelineSettings>(
@@ -243,6 +251,46 @@ export const MobileView = ({
     }, 3000);
   };
 
+  const handleAddNote = (note: string) => {
+    if (!selectedContact) return;
+
+    const noteContactId = selectedContact.id;
+    const noteContactName = selectedContact.name;
+
+    // Activityにメモ追加を記録
+    addActivity(
+      `${noteContactName}さんにメモを追加しました: ${note}`,
+      noteContactId.toString()
+    );
+
+    // メモ追加では新着コンタクトから消えない（ステータス変更なし）
+
+    // モーダルを閉じる
+    setShowAddNoteModal(false);
+    setSelectedContact(null);
+
+    // フラッシュメッセージ表示（メモを見るアクション付き）
+    setFlashMessage("メモを追加しました");
+    setFlashType("success");
+    setFlashActionText("メモを見る");
+    setFlashAction(() => () => {
+      // 該当コンタクトの詳細画面を開く
+      const contact = contacts.find((c) => c.id === noteContactId);
+      if (contact) {
+        setSelectedContact(contact);
+        setShowContactDetail(true);
+      }
+      setFlashVisible(false);
+    });
+
+    // 少し遅延させてフラッシュを表示（モーダルが閉じた後に表示）
+    setTimeout(() => {
+      setFlashVisible(true);
+      // Homeタブに遷移
+      setCurrentTab("home");
+    }, 100);
+  };
+
   const renderTabContent = () => {
     if (currentTab === "home") {
       return (
@@ -266,8 +314,7 @@ export const MobileView = ({
               const contact = contacts.find((c) => c.id === id);
               if (contact) {
                 setSelectedContact(contact);
-                setAutoOpenNoteInput(true);
-                setShowContactDetail(true);
+                setShowAddNoteModal(true);
               }
             }}
             onThankYou={(id) => {
@@ -299,11 +346,17 @@ export const MobileView = ({
 
           <div className="divide-y divide-gray-100">
             {[...contacts]
-              .sort(
-                (a, b) =>
+              .sort((a, b) => {
+                // 新着コンタクト（status: "new"）を最上位に表示
+                if (a.status === "new" && b.status !== "new") return -1;
+                if (a.status !== "new" && b.status === "new") return 1;
+
+                // 同じステータスの場合は作成日時で降順ソート
+                return (
                   new Date(b.createdDate).getTime() -
                   new Date(a.createdDate).getTime()
-              )
+                );
+              })
               .map((contact) => (
                 <div
                   key={contact.id}
@@ -323,9 +376,16 @@ export const MobileView = ({
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate">
-                        {contact.name}
-                      </h3>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-gray-900 truncate">
+                          {contact.name}
+                        </h3>
+                        {contact.status === "new" && (
+                          <span className="px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-medium">
+                            新着
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600 truncate">
                         {contact.title}
                       </p>
@@ -435,9 +495,9 @@ export const MobileView = ({
 
   const getScreenId = () => {
     const tabIds: Record<string, string> = {
-      home: "MOB-HOME",
-      contacts: "MOB-CONTACTS",
-      settings: "MOB-SETTINGS",
+      home: "MOB-HOME-TAB",
+      contacts: "MOB-CONTACTS-TAB",
+      settings: "MOB-SETTINGS-TAB",
     };
     return tabIds[currentTab] || "MOB-UNKNOWN";
   };
@@ -592,6 +652,18 @@ export const MobileView = ({
         />
       )}
 
+      {showAddNoteModal && selectedContact && (
+        <AddNoteModal
+          isOpen={showAddNoteModal}
+          contact={selectedContact}
+          onClose={() => {
+            setShowAddNoteModal(false);
+            setSelectedContact(null);
+          }}
+          onAddNote={handleAddNote}
+        />
+      )}
+
       {showContactDetail && selectedContact && (
         <ContactDetailPage
           contact={selectedContact}
@@ -609,6 +681,7 @@ export const MobileView = ({
           onFollowUpClick={() => {
             setShowFollowUpModal(true);
           }}
+          onDeepSearchClick={handleDeepSearch}
           autoOpenNoteInput={autoOpenNoteInput}
         />
       )}
@@ -626,7 +699,9 @@ export const MobileView = ({
         message={flashMessage}
         isVisible={flashVisible}
         onClose={() => setFlashVisible(false)}
-        duration={3000}
+        duration={5000}
+        actionText={flashActionText}
+        onAction={flashAction}
       />
     </div>
   );

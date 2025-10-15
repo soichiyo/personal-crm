@@ -38,7 +38,7 @@ export const PersonalCRMHome = () => {
       {/* Screen Identifier for Testing - 最上位固定バー */}
       <div className="fixed top-0 left-0 right-0 bg-yellow-100 border-b border-yellow-300 px-4 py-2 flex items-center justify-center gap-2 z-[9999]">
         <span className="text-xs font-mono font-semibold text-yellow-900">
-          画面ID: {viewMode === "mobile" ? "MOB-001" : "DSK-001"}
+          画面ID: {viewMode === "mobile" ? "MOB-APP-ROOT" : "DSK-001"}
         </span>
         <span className="text-xs text-yellow-700">|</span>
         <span className="text-xs text-yellow-800">
