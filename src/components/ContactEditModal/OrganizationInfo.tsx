@@ -12,7 +12,8 @@ export const OrganizationInfo: React.FC<OrganizationInfoProps> = ({
 }) => {
   const organization = contact.organization || {
     name: '',
-    title: '',
+    department: '',
+    jobTitle: '',
     address: '',
     url: '',
   };
@@ -26,10 +27,10 @@ export const OrganizationInfo: React.FC<OrganizationInfoProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* 組織名 */}
+      {/* 会社・組織名 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          組織名
+          会社・組織名
         </label>
         <input
           type="text"
@@ -40,16 +41,30 @@ export const OrganizationInfo: React.FC<OrganizationInfoProps> = ({
         />
       </div>
 
-      {/* 組織での役職 */}
+      {/* 部署名 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          組織での役職
+          部署名
         </label>
         <input
           type="text"
-          value={organization.title || ''}
-          onChange={(e) => handleOrgChange('title', e.target.value)}
-          placeholder="例: マーケティング部長"
+          value={organization.department || ''}
+          onChange={(e) => handleOrgChange('department', e.target.value)}
+          placeholder="例: マーケティング部"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
+      </div>
+
+      {/* 役職・肩書 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          役職・肩書
+        </label>
+        <input
+          type="text"
+          value={organization.jobTitle || ''}
+          onChange={(e) => handleOrgChange('jobTitle', e.target.value)}
+          placeholder="例: 部長"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
         />
       </div>

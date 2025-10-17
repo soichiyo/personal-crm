@@ -75,7 +75,7 @@ export const DesktopView = ({
   const handleArchive = (id: number) => {
     const contact = contacts.find((c) => c.id === id);
     if (contact) {
-      addActivity(`${contact.name}さんをアーカイブしました`);
+      addActivity(`${contact.name}さんを後で見ることにしました`);
     }
     setContacts(
       contacts.map((c) =>
@@ -253,7 +253,7 @@ export const DesktopView = ({
                           onClick={() => handleArchive(contact.id)}
                           className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
                         >
-                          アーカイブ
+                          後で
                         </button>
                       </div>
                     </div>

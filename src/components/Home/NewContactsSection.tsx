@@ -134,7 +134,7 @@ export const NewContactsSection: React.FC<NewContactsSectionProps> = ({
                 onClick={() => onArchive && onArchive(contact.id)}
                 className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
               >
-                アーカイブ
+                後で
               </button>
             </div>
           </div>

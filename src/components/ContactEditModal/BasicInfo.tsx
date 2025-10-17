@@ -103,34 +103,6 @@ export const BasicInfo: React.FC<BasicInfoProps> = ({ contact, onChange }) => {
         />
       </div>
 
-      {/* 会社 */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          会社
-        </label>
-        <input
-          type="text"
-          value={contact.company || ''}
-          onChange={(e) => onChange('company', e.target.value)}
-          placeholder="ABC株式会社"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-        />
-      </div>
-
-      {/* 役職 */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          役職
-        </label>
-        <input
-          type="text"
-          value={contact.title || ''}
-          onChange={(e) => onChange('title', e.target.value)}
-          placeholder="営業部長"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-        />
-      </div>
-
       {/* キャッチフレーズ */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">

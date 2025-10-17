@@ -29,8 +29,9 @@ export interface Contact {
 
   // 組織情報
   organization?: {
-    name: string; // 組織名
-    title: string; // 肩書
+    name: string; // 会社・組織名
+    department?: string; // 部署名
+    jobTitle?: string; // 役職・肩書
     phone?: string; // 電話番号
     address?: string; // 住所
     url?: string; // URL

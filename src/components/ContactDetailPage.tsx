@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Edit3, Globe, Plus, Sparkles, Cake } from "lucide-react";
+import { ArrowLeft, Edit3, Globe, Plus, Sparkles, Cake, Trash2 } from "lucide-react";
 import { Contact } from "../types/Contact";
 import { NoteModal } from "./NoteModal";
 
@@ -9,20 +9,21 @@ interface ContactDetailPageProps {
   onEdit: (contact: Contact) => void;
   onFollowUpClick?: () => void;
   onDeepSearchClick?: () => void;
+  onDelete?: (id: number) => void;
   autoOpenNoteInput?: boolean;
 }
 
 interface TimelineEntry {
   id: string;
   date: string;
-  type: "note" | "linkedin" | "contact_created" | "birthday";
+  type: "linkedin" | "birthday" | "promotion" | "marriage" | "childbirth" | "job-change" | "new-product";
   content: string;
 }
 
 interface ActivityEntry {
   id: string;
   date: string;
-  type: "reminder_completed" | "contact_created";
+  type: "note" | "follow-up-sent" | "meeting" | "contact_created";
   content: string;
 }
 
@@ -32,26 +33,22 @@ export const ContactDetailPage = ({
   onEdit,
   onFollowUpClick,
   onDeepSearchClick,
+  onDelete,
   autoOpenNoteInput = false,
 }: ContactDetailPageProps) => {
   const [showNoteInput, setShowNoteInput] = useState(autoOpenNoteInput);
   const [noteText, setNoteText] = useState("");
   const [showNoteModal, setShowNoteModal] = useState(false);
-  const [selectedNote, setSelectedNote] = useState<TimelineEntry | null>(null);
+  const [selectedNote, setSelectedNote] = useState<ActivityEntry | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Mock timeline data
+  // Mock timeline data - その人の人生の出来事（Life Events）
   const [timeline, setTimeline] = useState<TimelineEntry[]>([
     {
       id: "1",
       date: "08.01",
       type: "linkedin",
-      content: "LinkedInで投稿: 「この度私は...」",
-    },
-    {
-      id: "2",
-      date: "08.05",
-      type: "note",
-      content: "Note追加「会話で印象に残ったこと...」",
+      content: "LinkedInで投稿: 「この度、新しいプロジェクトを立ち上げることになりました...」",
     },
   ]);
 
@@ -81,41 +78,30 @@ export const ContactDetailPage = ({
     }
   }, [contact.birthday]);
 
-  // Mock activity data (V1: Reminder関連のアクティビティは非表示)
-  const allActivities: ActivityEntry[] = [
+  // Mock activity data - 自分のアクション（Your Actions）
+  const [activities, setActivities] = useState<ActivityEntry[]>([
     {
       id: "1",
-      date: "08.25",
-      type: "reminder_completed",
-      content: "Reminder完了（フォロー済）",
-    },
-    {
-      id: "2",
-      date: "08.01",
+      date: "10.01",
       type: "contact_created",
-      content: "Contact作成",
+      content: "コンタクトを作成しました",
     },
-  ];
-
-  // Reminder関連のアクティビティをフィルタリング
-  const activities = allActivities.filter(
-    (activity) => activity.type !== "reminder_completed"
-  );
+  ]);
 
   const handleAddNote = () => {
     if (!noteText.trim()) return;
 
-    const newNote: TimelineEntry = {
+    const newNote: ActivityEntry = {
       id: Date.now().toString(),
       date: new Date().toLocaleDateString("ja-JP", {
         month: "2-digit",
         day: "2-digit",
       }),
       type: "note",
-      content: `Note追加「${noteText}」`,
+      content: `メモを追加: 「${noteText}」`,
     };
 
-    setTimeline([newNote, ...timeline]);
+    setActivities([newNote, ...activities]);
     setNoteText("");
     setShowNoteInput(false);
   };
@@ -189,23 +175,15 @@ export const ContactDetailPage = ({
             </div>
           </div>
 
-          {/* 基本情報セクション */}
+          {/* 連絡先情報セクション */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-3">基本情報</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">連絡先情報</h3>
             <div className="space-y-2 text-sm">
               <div className="flex">
                 <span className="text-gray-600 w-32 shrink-0">よみがな：</span>
                 <span className="text-gray-900">
                   {contact.nameReading || "-"}
                 </span>
-              </div>
-              <div className="flex">
-                <span className="text-gray-600 w-32 shrink-0">会社名：</span>
-                <span className="text-gray-900">{contact.company || "-"}</span>
-              </div>
-              <div className="flex">
-                <span className="text-gray-600 w-32 shrink-0">肩書：</span>
-                <span className="text-gray-900">{contact.title || "-"}</span>
               </div>
               <div className="flex">
                 <span className="text-gray-600 w-32 shrink-0">
@@ -285,17 +263,21 @@ export const ContactDetailPage = ({
             <h3 className="font-semibold text-gray-900 mb-3">組織情報</h3>
             <div className="space-y-2 text-sm">
               <div className="flex">
-                <span className="text-gray-600 w-32 shrink-0">組織名：</span>
+                <span className="text-gray-600 w-32 shrink-0">会社・組織名：</span>
                 <span className="text-gray-900">
                   {contact.organization?.name || "-"}
                 </span>
               </div>
               <div className="flex">
-                <span className="text-gray-600 w-32 shrink-0">
-                  部署・役職：
-                </span>
+                <span className="text-gray-600 w-32 shrink-0">部署名：</span>
                 <span className="text-gray-900">
-                  {contact.organization?.title || "-"}
+                  {contact.organization?.department || "-"}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-gray-600 w-32 shrink-0">役職・肩書：</span>
+                <span className="text-gray-900">
+                  {contact.organization?.jobTitle || "-"}
                 </span>
               </div>
               <div className="flex">
@@ -409,16 +391,58 @@ export const ContactDetailPage = ({
         {/* Divider */}
         <div className="h-2 bg-gray-100"></div>
 
-        {/* Timeline Section */}
+        {/* Timeline Section - その人の人生の出来事 */}
         <div className="px-6 py-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Timeline</h2>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Timeline</h2>
+              <p className="text-xs text-gray-500 mt-1">その人の人生の出来事</p>
+            </div>
+          </div>
+
+          {/* Timeline Entries */}
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {timeline.length === 0 ? (
+              <p className="text-sm text-gray-500">まだ情報がありません</p>
+            ) : (
+              timeline.map((entry) => (
+                <div
+                  key={entry.id}
+                  className={`flex gap-3 text-sm ${
+                    entry.type === "birthday"
+                      ? "bg-pink-50 -mx-2 px-2 py-2 rounded-lg"
+                      : "bg-blue-50 -mx-2 px-2 py-2 rounded-lg"
+                  }`}
+                >
+                  <span className="text-gray-500 font-medium min-w-[40px]">
+                    {entry.date}
+                  </span>
+                  {entry.type === "birthday" && (
+                    <Cake className="w-4 h-4 text-pink-600 mt-0.5" />
+                  )}
+                  <p className="flex-1 text-gray-900">{entry.content}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-2 bg-gray-100"></div>
+
+        {/* Activity Section - 自分のアクション */}
+        <div className="px-6 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Activity</h2>
+              <p className="text-xs text-gray-500 mt-1">自分のアクション</p>
+            </div>
             <button
               onClick={() => setShowNoteInput(!showNoteInput)}
               className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-colors text-sm font-medium shadow-sm"
             >
               <Plus className="w-4 h-4" />
-              <span>ノートを追加</span>
+              <span>メモを追加</span>
             </button>
           </div>
 
@@ -428,7 +452,7 @@ export const ContactDetailPage = ({
               <textarea
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
-                placeholder="ノートを追加..."
+                placeholder="メモを追加..."
                 className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-900"
                 rows={3}
               />
@@ -452,65 +476,40 @@ export const ContactDetailPage = ({
             </div>
           )}
 
-          {/* Timeline Entries */}
+          {/* Activity Entries */}
           <div className="space-y-3 max-h-96 overflow-y-auto">
-            {timeline.map((entry) => (
+            {activities.map((activity) => (
               <div
-                key={entry.id}
+                key={activity.id}
                 className={`flex gap-3 text-sm ${
-                  entry.type === "birthday"
-                    ? "bg-gray-50 -mx-2 px-2 py-2 rounded-lg"
-                    : entry.type === "note"
+                  activity.type === "note"
                     ? "cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-colors border border-transparent hover:border-gray-200"
                     : ""
                 }`}
                 onClick={() => {
-                  if (entry.type === "note") {
-                    setSelectedNote(entry);
+                  if (activity.type === "note") {
+                    setSelectedNote(activity);
                     setShowNoteModal(true);
                   }
                 }}
               >
                 <span className="text-gray-500 font-medium min-w-[40px]">
-                  {entry.date}
+                  {activity.date}
                 </span>
-                {entry.type === "birthday" && (
-                  <Cake className="w-4 h-4 text-gray-600 mt-0.5" />
-                )}
                 <p
                   className={`flex-1 ${
-                    entry.type === "birthday"
-                      ? "text-gray-900 font-medium"
-                      : entry.type === "note"
+                    activity.type === "note"
                       ? "text-gray-700 hover:text-gray-900 line-clamp-2"
                       : "text-gray-700"
                   }`}
                 >
-                  {entry.content}
-                  {entry.type === "note" && (
+                  {activity.content}
+                  {activity.type === "note" && (
                     <span className="text-xs text-gray-400 ml-2">
                       タップして展開
                     </span>
                   )}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="h-2 bg-gray-100"></div>
-
-        {/* Activity Section */}
-        <div className="px-6 py-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Activity</h2>
-          <div className="space-y-3">
-            {activities.map((activity) => (
-              <div key={activity.id} className="flex gap-3 text-sm">
-                <span className="text-gray-500 font-medium min-w-[40px]">
-                  {activity.date}
-                </span>
-                <p className="text-gray-700">{activity.content}</p>
               </div>
             ))}
           </div>
@@ -544,6 +543,14 @@ export const ContactDetailPage = ({
             <Globe className="w-5 h-5" />
             <span>この人物を深く掘る</span>
           </button>
+
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+          >
+            <Trash2 className="w-5 h-5" />
+            <span>このコンタクトを削除</span>
+          </button>
         </div>
 
         {/* Bottom Spacing */}
@@ -560,6 +567,40 @@ export const ContactDetailPage = ({
             setSelectedNote(null);
           }}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              コンタクトを削除
+            </h3>
+            <p className="text-sm text-gray-600 mb-6">
+              {contact.name}さんのコンタクトを削除してもよろしいですか？この操作は取り消せません。
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-4 py-3 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={() => {
+                  if (onDelete) {
+                    onDelete(contact.id);
+                  }
+                  setShowDeleteModal(false);
+                  onClose();
+                }}
+                className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+              >
+                削除する
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

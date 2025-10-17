@@ -21,6 +21,7 @@ import { ActivitySection } from "./Home/ActivitySection";
 import { TodayEventsSection } from "./Home/TodayEventsSection";
 import { Flash, FlashType } from "./common/Flash";
 import { TimelineSettingsSection } from "./Settings/TimelineSettingsSection";
+import { ActivityDetailModal } from "./ActivityDetailModal";
 
 interface MobileViewProps {
   contacts: Contact[];
@@ -47,7 +48,9 @@ export const MobileView = ({
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+  const [showActivityDetailModal, setShowActivityDetailModal] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [currentTab, setCurrentTab] = useState("home");
   const [editOrigin, setEditOrigin] = useState<"detail" | "direct" | null>(
     null
@@ -84,13 +87,21 @@ export const MobileView = ({
   const handleArchive = (id: number) => {
     const contact = contacts.find((c) => c.id === id);
     if (contact) {
-      addActivity(`${contact.name}さんをアーカイブしました`);
+      addActivity(`${contact.name}さんを後で見ることにしました`);
     }
     setContacts(
       contacts.map((c) =>
         c.id === id ? { ...c, status: "archived" as const } : c
       )
     );
+  };
+
+  const handleDelete = (id: number) => {
+    const contact = contacts.find((c) => c.id === id);
+    if (contact) {
+      addActivity(`${contact.name}さんのコンタクトを削除しました`);
+    }
+    setContacts(contacts.filter((c) => c.id !== id));
   };
 
   const handleKeepInTouchConfirm = (
@@ -291,6 +302,19 @@ export const MobileView = ({
     }, 100);
   };
 
+  const handleActivityClick = (activity: Activity, contact: Contact | undefined) => {
+    setSelectedActivity(activity);
+    setSelectedContact(contact || null);
+    setShowActivityDetailModal(true);
+  };
+
+  const handleViewContactFromActivity = () => {
+    setShowActivityDetailModal(false);
+    if (selectedContact) {
+      setShowContactDetail(true);
+    }
+  };
+
   const renderTabContent = () => {
     if (currentTab === "home") {
       return (
@@ -328,7 +352,9 @@ export const MobileView = ({
           />
           <ActivitySection
             activities={activities}
+            contacts={contacts}
             timelineSettings={timelineSettings}
+            onActivityClick={handleActivityClick}
           />
         </div>
       );
@@ -682,6 +708,7 @@ export const MobileView = ({
             setShowFollowUpModal(true);
           }}
           onDeepSearchClick={handleDeepSearch}
+          onDelete={handleDelete}
           autoOpenNoteInput={autoOpenNoteInput}
         />
       )}
@@ -691,6 +718,17 @@ export const MobileView = ({
         onClose={() => setShowNotificationModal(false)}
         notifications={notifications}
         contacts={contacts}
+      />
+
+      <ActivityDetailModal
+        isOpen={showActivityDetailModal}
+        activity={selectedActivity}
+        contact={selectedContact}
+        onClose={() => {
+          setShowActivityDetailModal(false);
+          setSelectedActivity(null);
+        }}
+        onViewContact={handleViewContactFromActivity}
       />
 
       {/* Flash Message */}
